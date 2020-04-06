@@ -22,8 +22,10 @@
       </el-table>
       <div slot="footer" class="dialog-footer">
         <router-link to>没有账号？添加账号</router-link>
-        <el-button @click="dialogTableVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogTableVisible = false">确 定</el-button>
+        <div>
+          <el-button @click="dialogTableVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogTableVisible = false">确 定</el-button>
+        </div>
       </div>
     </el-dialog>
   </div>
@@ -85,7 +87,9 @@ export default {
   }
 }
 /deep/.el-dialog {
+  padding: 0 15px;
   .el-dialog__header {
+    padding: 15px 0;
     .el-dialog__title {
       font-size: 22px;
     }
@@ -94,10 +98,12 @@ export default {
     padding: 0;
   }
   .el-dialog__footer {
-    a {
-      display: inline-block;
-      margin-right: 50px;
-    }
+    padding: 10px 0;
+  }
+  .dialog-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 }
 </style>

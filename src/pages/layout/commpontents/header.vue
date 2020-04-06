@@ -78,5 +78,10 @@ export default {
   height: 60px;
   align-items: center;
   justify-content: space-between;
+  div:nth-child(2) {
+    span:nth-child(1) {
+      margin-right: 15px;
+    }
+  }
 }
 </style>
