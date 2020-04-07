@@ -1,7 +1,7 @@
 <template>
   <div class="stock-header">
     <div>
-      <p>stock股票后台管理系统</p>
+      <p>stock股票系统</p>
     </div>
     <div>
     <div>

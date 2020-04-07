@@ -21,7 +21,8 @@
         <el-table-column prop="name" label="账号"></el-table-column>
       </el-table>
       <div slot="footer" class="dialog-footer">
-        <router-link to>没有账号？添加账号</router-link>
+        <!-- <router-link to="/">没有账号？添加账号</router-link> -->
+        <p @click="handleNoAccount">没有账号？添加账号</p>
         <div>
           <el-button @click="dialogTableVisible = false">取 消</el-button>
           <el-button type="primary" @click="dialogTableVisible = false">确 定</el-button>
@@ -57,6 +58,9 @@ export default {
   methods: {
     handleSubmit() {
       this.dialogTableVisible = true;
+    },
+    handleNoAccount () {
+      this.$router.push('/')
     }
   }
 };

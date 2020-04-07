@@ -1,16 +1,14 @@
 <template>
   <div class="layout-wrap">
     <el-container>
-      <el-aside width="200px">
-        <Aside />
-      </el-aside>
+      <el-header>
+        <Header />
+      </el-header>
       <el-container>
-        <el-header>
-          <Header />
-        </el-header>
+        <el-aside width="200px">
+          <Aside />
+        </el-aside>
         <el-main>
-          <!-- 发布文章和文章列表在这里显示内容 -->
-          <!-- <router-view/> -->
           <router-view :key="$route.path" />
         </el-main>
       </el-container>
@@ -39,7 +37,6 @@ export default {
 <style lang='less' scoped>
 .layout-wrap {
   height: 100%;
-  // padding: 0 220px;
 }
 .el-container {
   height: 100%;

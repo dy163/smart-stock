@@ -14,36 +14,41 @@ const routes = [
     component: () => import('@/pages/layout'),
     children: [
       {
-        name: 'account',
-        path: '/account',
-        // path: '',
+        name: 'account',  // 账号
+        // path: '/account',
+        path: '',
         component: () => import('@/pages/account')
+      },
+      {
+        name: 'screening',  // 筛股
+        path: '/screening',
+        component: () => import('@/pages/screening')
+      },
+      {
+        name: 'buy-trade',  // 交易
+        path: '/buy-trade',
+        component: () => import('@/pages/buy-trade')
+      },
+      {
+        name: 'sell-trade',  // 交易
+        path: '/sell-trade',
+        component: () => import('@/pages/sell-trade')
+      },
+      {
+        name: 'shares', //持仓管理
+        path: '/shares',
+        component: () => import('@/pages/shares')
+      },
+      { 
+        name: 'entrust',  // 委托
+        path: '/entrust',
+        component: () => import('@/pages/entrust')
+      },
+      {
+        name: 'bargain', // 成交
+        path: '/bargain',
+        component: () => import('@/pages/bargain')
       }
-      // {
-      //   name: 'information',
-      //   path: '/information',
-      //   component: () => import('@/pages/information')
-      // },
-      // {
-      //   name: 'verif',
-      //   path: '/verif',
-      //   component: () => import('@/pages/verif')
-      // },
-      // {
-      //   name: 'increase',
-      //   path: '/increase',
-      //   component: () => import('@/pages/increase')
-      // },
-      // {
-      //   name: 'settings',
-      //   path: '/settings',
-      //   component: () => import('@/pages/settings')
-      // },
-      // {
-      //   name: 'closing-time',
-      //   path: '/closing-time',
-      //   component: () => import('@/pages/closing-time')
-      // }
     ]
   }
 ]
