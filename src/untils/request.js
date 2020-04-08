@@ -1,19 +1,19 @@
 import axios from 'axios'
-// import { getUser, removeUser, removeUserName } from '@/utils/auth'
+import { getUser, removeUser, removeUserName } from '@/untils/auth'
 // import router from '@/router'
 
 const request = axios.create({
-//   baseURL: '/api' // 线上
+  baseURL: 'http://192.168.3.238:8089' 
   // baseURL: 'http://bourse.yidonghuayuan.com' // 线上
 })
 
 // Add a request interceptor（请求拦截器）
 request.interceptors.request.use(
   config => {
-    // const token = getUser()
-    // if (token) {
-    //   config.headers.token = `${token}`
-    // }
+    const token = getUser()
+    if (token) {
+      config.headers.token = `${token}`
+    }
     return config
   },
   err => {
@@ -23,13 +23,12 @@ request.interceptors.request.use(
 // Add a response interceptor(响应拦截器)
 request.interceptors.response.use(function (response) {
   // Do something with response data
-//   if(response.data.result === 401) {
-//     removeUser()
-//     removeUserName()
-//     this.$router.push('/login')
-//   } else {
+  if(response.data.result === 10000) {
+    removeUser()
+    this.$router.push('/login')
+  } else {
   return response
-//   }
+  }
   // return response
 }, function (error) {
   // Do something with response error
