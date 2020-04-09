@@ -12,7 +12,7 @@ export const userLogin = query => {
 }
 
 /**
- * 2.选择账号
+ * 2.选择弹框账号
  */
 export const userSelect = query => {
   return request({
@@ -67,7 +67,7 @@ export const userDelete = query => {
 }
 
 /**
- * 6.是否选择账号
+ * 7.是否选择账号
  */
 export const userIsSelect = query => {
     return request({
