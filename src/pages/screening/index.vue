@@ -89,6 +89,11 @@ export default {
   created() {
     this.handleFiltrateGetList();
   },
+  computed: {
+    buyEntrust() {
+      return this.$store.state.buyEntrust;
+    }
+  },
   methods: {
     // 获取股票列表
     async handleFiltrateGetList() {
@@ -129,22 +134,38 @@ export default {
       }
     },
     // 手动筛选
-    async handleFiltrateAddOne() {
-      try {
-        if (!this.stockAccount) {
-          this.$message({
-            message: "警告哦，请输入股票代码",
-            type: "warning"
-          });
-        } else {
-          this.handleFiltrateClear();
-          const date = new FormData();
-          date.append("stock_code", this.stockAccount);
-          const res = await filtrateAddOne(date);
-          this.handleFiltrateGetList();
-        }
-      } catch (error) {
-        console.log(error, "操作失败");
+    // async handleFiltrateAddOne() {
+    //   try {
+    //     if (!this.stockAccount) {
+    //       this.$message({
+    //         message: "警告哦，请输入股票代码",
+    //         type: "warning"
+    //       });
+    //     } else {
+    //       this.handleFiltrateClear();
+    //       const date = new FormData();
+    //       date.append("stock_code", this.stockAccount);
+    //       const res = await filtrateAddOne(date);
+    //       this.handleFiltrateGetList();
+    //       this.stockAccount = ''
+    //     }
+    //   } catch (error) {
+    //     console.log(error, "操作失败");
+    //   }
+    // },
+    handleFiltrateAddOne() {
+      if (!this.stockAccount) {
+        this.$message({
+          message: "警告哦，请输入股票代码",
+          type: "warning"
+        });
+      } else {
+        this.handleFiltrateClear();
+        this.$store.commit('handleFiltrateAddOne',this.stockAccount)
+        this.handleFiltrateGetList();
+        this.stockAccount = ''
+        this.$store.commit('handleAddBuy',this.filtrateList)
+        // window.localStorage.setItem('add',JSON.stringify(this.filtrateList[0]))
       }
     },
     // 删除单条股票

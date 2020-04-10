@@ -3,18 +3,30 @@
     <el-card>
       <el-button type="primary">一键托管</el-button>
     </el-card>
-    <el-card>
-      <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="date" label="代码"></el-table-column>
-        <el-table-column prop="name" label="名称"></el-table-column>
-        <el-table-column prop="address" label="市场"></el-table-column>
-        <el-table-column prop="address" label="收盘价"></el-table-column>
-        <el-table-column prop="address" label="开盘价"></el-table-column>
-        <el-table-column prop="address" label="年线"></el-table-column>
+    <el-card class="buy-trade-card">
+      <el-table
+        :data="tableData"
+        style="width: 100%"
+        :header-cell-style="thStyleFun"
+        :cell-style="cellStyleFun"
+      >
+        <el-table-column prop="account" label="账号名" width="120"></el-table-column>
+        <el-table-column prop="stock_code" label="股票代码"></el-table-column>
+        <el-table-column prop="stock_name" label="股票名称"></el-table-column>
+        <el-table-column prop="market" label="市场"></el-table-column>
+        <el-table-column prop="open" label="开盘价"></el-table-column>
+        <el-table-column prop="close" label="收盘价"></el-table-column>
+        <el-table-column prop="year_average" label="年线"></el-table-column>
+        <el-table-column prop="entrust_price" label="委托价"></el-table-column>
+        <el-table-column prop="quantity" label="数量"></el-table-column>
+        <el-table-column prop="amount" label="金额"></el-table-column>
+        <el-table-column prop="status" label="委托状态"></el-table-column>
         <el-table-column prop="address" label="操作">
-          <el-tag @click="dialogTableVisible = true">托管</el-tag>
-          <el-tag type="success">已托管</el-tag>
-          <el-tag type="danger">不可托管</el-tag>
+          <template slot-scope="scope">
+            <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">托管</el-button>
+            <el-button size="mini" type="success" @click="handleDelete(scope.$index, scope.row)">已托管</el-button>
+            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">不可托管</el-button>
+          </template>
         </el-table-column>
       </el-table>
     </el-card>
@@ -45,42 +57,43 @@ export default {
   data() {
     return {
       dialogTableVisible: false,
-      formLabelWidth: '80px',
+      formLabelWidth: "80px",
       form: {
         account: "",
         password: ""
       },
       formDate: {
-        name:''
+        name: ""
       },
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "1518 "
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "1517"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "1519"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "1516"
-        }
-      ]
+      tableData: []
     };
   },
-  created() {},
-  methods: {}
+  created() {
+    this.handlebuyTrade()
+  },
+  methods: {
+    handleEdit(index, row) {
+      console.log(index, row);
+    },
+    handleDelete(index, row) {
+      console.log(index, row);
+    },
+    thStyleFun() {
+      return "text-align:center";
+    },
+    cellStyleFun() {
+      return "text-align:center";
+    },
+    handlebuyTrade() {
+      // this.tableData = JSON.parse(window.localStorage.getItem('addBuy')) 
+      // this.tableData = JSON.parse(this.$store.commit('handleAddBuy')) 
+    }
+  }
 };
 </script>
 
 <style lang='less' scoped>
+.buy-trade-card {
+  margin-top: 10px;
+}
 </style>

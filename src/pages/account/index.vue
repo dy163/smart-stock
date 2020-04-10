@@ -33,7 +33,7 @@
         <el-table :data="tableData" style="width: 100%">
           <el-table-column prop="account" label="账号"></el-table-column>
           <el-table-column prop="create_time" label="创建时间"></el-table-column>
-          <el-table-column label="操作">
+          <el-table-column label="操作" >
             <template slot-scope="scope">
               <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">修改</el-button>
               <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
@@ -78,7 +78,13 @@
     </el-dialog>
     <!-- 账号选择弹框 -->
     <div class="nil-account">
-      <el-dialog title="选择中泰账号" :visible.sync="dialogTableVisible" :show-close="false" :close-on-click-modal="false" width="28%">
+      <el-dialog
+        title="选择中泰账号"
+        :visible.sync="dialogTableVisible"
+        :show-close="false"
+        :close-on-click-modal="false"
+        width="28%"
+      >
         <!-- <el-table
           :data="accountData"
           style="width: 100%"
@@ -163,13 +169,13 @@ export default {
         if (res.data.result === 10009) {
           this.dialogTableVisible = true;
           this.handllGetList();
-        } else if(res.data.result == null) {
+        } else if (res.data.result == null) {
           this.handleDialogAccount();
         }
       } catch (error) {
         this.$message({
           type: "info",
-          message: "已取消删除"
+          message: "取消选择账号"
         });
       }
     });
@@ -283,7 +289,7 @@ export default {
     },
     // 选择账号
     handleCurrentChange(val) {
-      this.valueAcconnt = val
+      this.valueAcconnt = val;
     },
     // 在次调用账号列表
     async handleDialogAccount() {
@@ -304,11 +310,17 @@ export default {
         if (res.data.status) {
           this.dialogTableVisible = false;
           this.handleDialogAccount();
-          this.handleSelectGetList(this.valueAcconnt)
+          this.handleSelectGetList(this.valueAcconnt);
         }
       } catch (error) {
         console.log(error, "操作失败");
       }
+    },
+    thStyleFun() {
+      return 'text-align:center'
+    },
+    cellStyleFun() {
+      return 'text-align:center'
     }
   }
 };
@@ -345,6 +357,7 @@ export default {
   .el-tag--danger {
     margin-left: 10px;
   }
+
 }
 .nil-account {
   /deep/.el-dialog {
