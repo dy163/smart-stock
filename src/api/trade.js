@@ -1,7 +1,7 @@
 import request from '@/untils/request'
 
 /**
- * 1.登录
+ * 13.单条买入数据
  */
 export const buyTrade = query => {
     return request({

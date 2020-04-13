@@ -85,16 +85,6 @@
         :close-on-click-modal="false"
         width="28%"
       >
-        <!-- <el-table
-          :data="accountData"
-          style="width: 100%"
-          @current-change="handleCurrentChange"
-          :highlight-current-row="true"
-        >
-          <el-table-column type="index" :index="indexMethod"></el-table-column>
-          <el-table-column label="序号" width="80"></el-table-column>
-          <el-table-column prop="account" label="账号"></el-table-column>
-        </el-table>-->
         <el-radio
           v-model="radio"
           :label="item.id"

@@ -2,40 +2,44 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import {
-  // filtrateGetList,
-  // filtrateAddList,
-  // filtrateClear,
-  // filtrateDelete,
-  filtrateAddOne
+  filtrateGetList,
 } from "@/api/record";
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    buyEntrust: '',
-    addBuy: window.localStorage.getItem('addBuy')
+    dataList: {
+      pageNum: '',
+      pageSize:'',
+      totalCount: ''
+    },
+    tableList: '',
+    buyEntrust: JSON.parse(window.localStorage.getItem('buyEntrust')),
   },
   mutations: {
-    async handleFiltrateAddOne(state,buyEntrust) {
-      state.buyEntrust = buyEntrust
-      try {
-        const date = new FormData();
-        date.append("stock_code", state.buyEntrust);
-        await filtrateAddOne(date);
-      } catch (error) {
-        console.log(error,'vuex单条数据')
-      }
+    handleFiltrateAddOne(state, buyEntrust) {
+      state.buyEntrust = Object.assign(buyEntrust)
+      window.localStorage.setItem('buyEntrust', JSON.stringify(state.buyEntrust))
     },
-    handleAddBuy(state, addBuy) {
-      state.addBuy = addBuy
-      // window.localStorage.setItem('addBuy',JSON.stringify(state.addBuy))
+    async handlGetList(state, dataList) {
+      try {
+        state.dataList = Object.assign(dataList)
+        const date = new FormData();
+        date.append("pageNum", state.dataList.pageNum);
+        date.append("pageSize", state.dataList.pageSize);
+        const res = await filtrateGetList(date);
+        state.tableList =  Object.assign(res.data.result.list);
+        // this.filtrateList = res.data.result.list;
+        state.dataList.totalCount = res.data.result.total;
+        state.dataList.pageNum = res.data.result.pageNum
+      } catch (error) {
+
+      }
     }
-    
   },
   actions: {
 
   },
-  modules: {
-  }
+  modules: {}
 })

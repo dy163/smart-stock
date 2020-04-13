@@ -42,7 +42,16 @@
         <el-table-column prop="entrust_price" label="委托价"></el-table-column>
         <el-table-column prop="quantity" label="数量"></el-table-column>
         <el-table-column prop="amount" label="金额"></el-table-column>
-        <el-table-column prop="status" label="委托状态"></el-table-column>
+        <el-table-column prop="status" label="委托状态">
+          <template slot-scope="scope">
+            <el-tag class="normal"
+            effect="dark"
+            size="mini"
+            :type="screenType[scope.row.status].type">
+            {{ screenType[scope.row.status].label }}
+            </el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
@@ -52,7 +61,7 @@
       </el-table>
       <div class="screening-pagination">
         <el-pagination
-          :current-page="pageNum"
+          :current-page="page"
           background
           layout="prev, pager, next"
           :page-size="pageSize"
@@ -72,6 +81,7 @@ import {
   filtrateDelete,
   filtrateAddOne
 } from "@/api/record";
+import { mapState } from "vuex";
 
 export default {
   name: "ScreeningIndex",
@@ -79,6 +89,28 @@ export default {
     return {
       limitNum: 1, // 上传excell时，同时允许上传的最大数
       fileList: [], // excel文件列表
+      screenType: [ //  状态
+        {
+          type: "",
+          label: "未托管"
+        },
+        {
+          type: "success",
+          label: "已托管"
+        },
+        {
+          type: "info",
+          label: "不可托管"
+        },
+        {
+          type: "danger",
+          label: "已委托"
+        },
+        {
+          type: "warning",
+          label: "已成交"
+        }
+      ],
       stockAccount: "", // 手动筛选
       filtrateList: [],
       pageNum: 1,
@@ -90,28 +122,43 @@ export default {
     this.handleFiltrateGetList();
   },
   computed: {
-    buyEntrust() {
-      return this.$store.state.buyEntrust;
-    }
+    ...mapState({
+      getList: state => state.tableList
+    }),
+    ...mapState({
+      total: state => state.dataList.totalCount
+    }),
+    ...mapState({
+      page: state => state.dataList.pageNum
+    })
   },
   methods: {
     // 获取股票列表
     async handleFiltrateGetList() {
       try {
-        const date = new FormData();
-        date.append("pageNum", this.pageNum);
-        date.append("pageSize", this.pageSize);
-        const res = await filtrateGetList(date);
-        this.filtrateList = res.data.result.list;
-        this.totalCount = res.data.result.total;
+        // const date = new FormData();
+        // date.append("pageNum", this.pageNum);
+        // date.append("pageSize", this.pageSize);
+        // const res = await filtrateGetList(date);
+        // this.filtrateList = res.data.result.list;
+        // this.totalCount = res.data.result.total;
+        // this.$store.commit("handleFiltrateAddOne", this.filtrateList);
+        const date = {
+          pageNum: this.pageNum,
+          pageSize: this.pageSize
+        }
+        this.$store.commit("handlGetList",date);
+        this.filtrateList =  Array.from(this.getList)
+        this.totalCount = this.total
       } catch (error) {
         console.log(error, "操作失败");
       }
     },
     // 分页
     handleCurrentChange(page) {
-      this.pageNum = page;
+      this.page = page;
       this.handleFiltrateGetList();
+      console.log(this.page)
     },
     // 智能选股
     async handleBrainPower() {
@@ -134,38 +181,23 @@ export default {
       }
     },
     // 手动筛选
-    // async handleFiltrateAddOne() {
-    //   try {
-    //     if (!this.stockAccount) {
-    //       this.$message({
-    //         message: "警告哦，请输入股票代码",
-    //         type: "warning"
-    //       });
-    //     } else {
-    //       this.handleFiltrateClear();
-    //       const date = new FormData();
-    //       date.append("stock_code", this.stockAccount);
-    //       const res = await filtrateAddOne(date);
-    //       this.handleFiltrateGetList();
-    //       this.stockAccount = ''
-    //     }
-    //   } catch (error) {
-    //     console.log(error, "操作失败");
-    //   }
-    // },
-    handleFiltrateAddOne() {
-      if (!this.stockAccount) {
-        this.$message({
-          message: "警告哦，请输入股票代码",
-          type: "warning"
-        });
-      } else {
-        this.handleFiltrateClear();
-        this.$store.commit('handleFiltrateAddOne',this.stockAccount)
-        this.handleFiltrateGetList();
-        this.stockAccount = ''
-        this.$store.commit('handleAddBuy',this.filtrateList)
-        // window.localStorage.setItem('add',JSON.stringify(this.filtrateList[0]))
+    async handleFiltrateAddOne() {
+      try {
+        if (!this.stockAccount) {
+          this.$message({
+            message: "警告哦，请输入股票代码",
+            type: "warning"
+          });
+        } else {
+          this.handleFiltrateClear();
+          const date = new FormData();
+          date.append("stock_code", this.stockAccount);
+          const res = await filtrateAddOne(date);
+          this.handleFiltrateGetList();
+          this.stockAccount = "";
+        }
+      } catch (error) {
+        console.log(error, "操作失败");
       }
     },
     // 删除单条股票

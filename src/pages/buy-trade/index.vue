@@ -5,59 +5,97 @@
     </el-card>
     <el-card class="buy-trade-card">
       <el-table
-        :data="tableData"
+        :data="value"
         style="width: 100%"
         :header-cell-style="thStyleFun"
         :cell-style="cellStyleFun"
       >
         <el-table-column prop="account" label="账号名" width="120"></el-table-column>
-        <el-table-column prop="stock_code" label="股票代码"></el-table-column>
-        <el-table-column prop="stock_name" label="股票名称"></el-table-column>
-        <el-table-column prop="market" label="市场"></el-table-column>
-        <el-table-column prop="open" label="开盘价"></el-table-column>
-        <el-table-column prop="close" label="收盘价"></el-table-column>
-        <el-table-column prop="year_average" label="年线"></el-table-column>
-        <el-table-column prop="entrust_price" label="委托价"></el-table-column>
-        <el-table-column prop="quantity" label="数量"></el-table-column>
-        <el-table-column prop="amount" label="金额"></el-table-column>
-        <el-table-column prop="status" label="委托状态"></el-table-column>
-        <el-table-column prop="address" label="操作">
+        <el-table-column prop="stock_code" label="股票代码" width="120"></el-table-column>
+        <el-table-column prop="stock_name" label="股票名称" width="120"></el-table-column>
+        <el-table-column prop="market" label="市场" width="120"></el-table-column>
+        <el-table-column prop="open" label="开盘价" width="120"></el-table-column>
+        <el-table-column prop="close" label="收盘价" width="120"></el-table-column>
+        <el-table-column prop="year_average" label="年线" width="120"></el-table-column>
+        <el-table-column prop="entrust_price" label="委托价" width="120"></el-table-column>
+        <el-table-column prop="quantity" label="数量" width="120"></el-table-column>
+        <el-table-column prop="amount" label="金额" width="120"></el-table-column>
+        <el-table-column prop="status" label="委托状态" width="120">
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">托管</el-button>
-            <el-button size="mini" type="success" @click="handleDelete(scope.$index, scope.row)">已托管</el-button>
-            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">不可托管</el-button>
+            <el-tag
+              class="normal"
+              effect="dark"
+              size="mini"
+              :type="buyType[scope.row.status].type"
+            >{{ buyType[scope.row.status].label }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="address" label="操作" width="280">
+          <template slot-scope="scope">
+            <el-button size="mini" type="primary" @click="handleDeposit(scope.$index, scope.row)">托管</el-button>
+            <el-button
+              size="mini"
+              type="success"
+              @click="handleManaged(scope.$index, scope.row)"
+            >已托管</el-button>
+            <el-button
+              size="mini"
+              type="danger"
+              @click="handleUntrusteeship(scope.$index, scope.row)"
+            >不可托管</el-button>
           </template>
         </el-table-column>
       </el-table>
+      <div class="screening-pagination">
+        <el-pagination
+          :current-page="pageNum"
+          background
+          layout="prev, pager, next"
+          :page-size="pageSize"
+          :total="totalCount"
+          @current-change="handleCurrentChange"
+        ></el-pagination>
+      </div>
     </el-card>
     <!-- 弹框 -->
-    <el-dialog title="托管数据" :visible.sync="dialogTableVisible" width="35%">
-      <el-form :model="formDate">
-        <el-form-item label="活动名称" :label-width="formLabelWidth">
-          <el-input v-model="formDate.name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="活动名称" :label-width="formLabelWidth">
-          <el-input v-model="formDate.name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="活动名称" :label-width="formLabelWidth">
-          <el-input v-model="formDate.name" autocomplete="off"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogTableVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogTableVisible = false">确 定</el-button>
+    <el-dialog title="托管数据" :visible.sync="dialogTableVisible" width="25%">
+      <div class="dialog-deposit">
+        <div>
+          <p>代码：</p>
+          <p>{{ depositCode }}</p>
+        </div>
+        <div>
+          <p>年线：</p>
+          <p>{{ depositAverage }}</p>
+        </div>
+        <div>
+          <p>数量：</p>
+          <el-input v-model="depositDate" autocomplete="off" placeholder="请输入数量"/>
+        </div>
+        <el-button type="primary" @click.native="handleSingleData">确定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import { buyTrade } from "@/api/trade"
+import { mapState } from "vuex";
+
 export default {
   name: "BuyTradeIndex",
   data() {
     return {
       dialogTableVisible: false,
       formLabelWidth: "80px",
+      pageNum: 1,
+      pageSize: 15,
+      totalCount: 0,
+      depositCode: [],  // 弹框代码展示
+      value: [],  // 表格绑定值
+      depositDate: '',    // 数量值得变化
+      depositAverage: '', // 年线
+      id: '',
       form: {
         account: "",
         password: ""
@@ -65,19 +103,54 @@ export default {
       formDate: {
         name: ""
       },
-      tableData: []
+      buyType: [
+        //  状态
+        {
+          type: "",
+          label: "未托管"
+        },
+        {
+          type: "success",
+          label: "已托管"
+        },
+        {
+          type: "info",
+          label: "不可托管"
+        },
+        {
+          type: "danger",
+          label: "已委托"
+        },
+        {
+          type: "warning",
+          label: "已成交"
+        }
+      ]
     };
   },
+  computed: {
+    ...mapState({
+      print: state => state.buyEntrust
+    })
+  },
   created() {
-    this.handlebuyTrade()
+    this.handlebuyTrade();
   },
   methods: {
-    handleEdit(index, row) {
+    // 托管
+    handleDeposit(index, row) {
+      this.dialogTableVisible = true;
+      console.log(index, row);
+      this.depositAverage = row.year_average
+      this.depositCode = row.stock_code
+      this.id = row.id
+    },
+    // 已委托
+    handleManaged(index, row) {
       console.log(index, row);
     },
-    handleDelete(index, row) {
-      console.log(index, row);
-    },
+    // 不可托管
+    handleUntrusteeship(index, row) {},
     thStyleFun() {
       return "text-align:center";
     },
@@ -85,8 +158,26 @@ export default {
       return "text-align:center";
     },
     handlebuyTrade() {
-      // this.tableData = JSON.parse(window.localStorage.getItem('addBuy')) 
-      // this.tableData = JSON.parse(this.$store.commit('handleAddBuy')) 
+      this.value = Array.from(this.print);
+    },
+    // 分页
+    handleCurrentChange(page) {
+      this.pageNum = page;
+    },
+    // 买入单条数据
+    async handleSingleData() {
+      try {
+        // const date = new FormData();
+        // date.append('id', this.id)
+        // date.append('quantity', this.depositDate)
+        // const res = await buyTrade(date)
+        // this.$store.commit('handleFiltrateAddOne',this.value)
+        // this.handlebuyTrade()
+        // this.dialogTableVisible = false
+        console.log(this.value)
+      } catch (error) {
+        
+      }
     }
   }
 };
@@ -95,5 +186,28 @@ export default {
 <style lang='less' scoped>
 .buy-trade-card {
   margin-top: 10px;
+}
+.screening-pagination {
+  margin-top: 20px;
+  text-align: center;
+}
+.dialog-deposit {
+  padding: 0 100px;
+  div {
+    height: 50px;
+    display: flex;
+    align-items: center;
+  }
+  div:nth-child(3) {
+    display: flex;
+    justify-content: space-between;
+    p {
+      width: 60px;
+    }
+  }
+  .el-button {
+    margin-top: 20px;
+    width: 100%;
+  }
 }
 </style>
