@@ -61,7 +61,7 @@
       </el-table>
       <div class="screening-pagination">
         <el-pagination
-          :current-page="page"
+          :current-page="pageNum"
           background
           layout="prev, pager, next"
           :page-size="pageSize"
@@ -121,44 +121,25 @@ export default {
   created() {
     this.handleFiltrateGetList();
   },
-  computed: {
-    ...mapState({
-      getList: state => state.tableList
-    }),
-    ...mapState({
-      total: state => state.dataList.totalCount
-    }),
-    ...mapState({
-      page: state => state.dataList.pageNum
-    })
-  },
   methods: {
     // 获取股票列表
     async handleFiltrateGetList() {
       try {
-        // const date = new FormData();
-        // date.append("pageNum", this.pageNum);
-        // date.append("pageSize", this.pageSize);
-        // const res = await filtrateGetList(date);
-        // this.filtrateList = res.data.result.list;
-        // this.totalCount = res.data.result.total;
-        // this.$store.commit("handleFiltrateAddOne", this.filtrateList);
-        const date = {
-          pageNum: this.pageNum,
-          pageSize: this.pageSize
-        }
-        this.$store.commit("handlGetList",date);
-        this.filtrateList =  Array.from(this.getList)
-        this.totalCount = this.total
+        const date = new FormData();
+        date.append("pageNum", this.pageNum);
+        date.append("pageSize", this.pageSize);
+        const res = await filtrateGetList(date);
+        this.filtrateList = res.data.result.list;
+        this.totalCount = res.data.result.total;
+        this.$store.commit("handleFiltrateAddOne", this.filtrateList);
       } catch (error) {
         console.log(error, "操作失败");
       }
     },
     // 分页
     handleCurrentChange(page) {
-      this.page = page;
+      this.pageNum = page;
       this.handleFiltrateGetList();
-      console.log(this.page)
     },
     // 智能选股
     async handleBrainPower() {

@@ -32,15 +32,22 @@
         </el-table-column>
         <el-table-column prop="address" label="操作" width="280">
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" @click="handleDeposit(scope.$index, scope.row)">托管</el-button>
+            <el-button
+              size="mini"
+              type="primary"
+              @click="handleDeposit(scope.$index, scope.row)"
+              :disabled="scope.status === 0? true: false"
+            >托管</el-button>
             <el-button
               size="mini"
               type="success"
+              :disabled="scope.status === 0? false: true"
               @click="handleManaged(scope.$index, scope.row)"
             >已托管</el-button>
             <el-button
               size="mini"
               type="danger"
+              :disabled="scope.status === 0? false: true"
               @click="handleUntrusteeship(scope.$index, scope.row)"
             >不可托管</el-button>
           </template>
@@ -70,7 +77,7 @@
         </div>
         <div>
           <p>数量：</p>
-          <el-input v-model="depositDate" autocomplete="off" placeholder="请输入数量"/>
+          <el-input v-model="depositDate" autocomplete="off" placeholder="请输入数量" />
         </div>
         <el-button type="primary" @click.native="handleSingleData">确定</el-button>
       </div>
@@ -79,7 +86,7 @@
 </template>
 
 <script>
-import { buyTrade } from "@/api/trade"
+import { buyTrade } from "@/api/trade";
 import { mapState } from "vuex";
 
 export default {
@@ -91,11 +98,12 @@ export default {
       pageNum: 1,
       pageSize: 15,
       totalCount: 0,
-      depositCode: [],  // 弹框代码展示
-      value: [],  // 表格绑定值
-      depositDate: '',    // 数量值得变化
-      depositAverage: '', // 年线
-      id: '',
+      depositCode: [], // 弹框代码展示
+      value: [], // 表格绑定值
+      depositDate: "", // 数量值得变化
+      depositAverage: "", // 年线
+      id: "",
+      index: "",
       form: {
         account: "",
         password: ""
@@ -140,10 +148,10 @@ export default {
     // 托管
     handleDeposit(index, row) {
       this.dialogTableVisible = true;
-      console.log(index, row);
-      this.depositAverage = row.year_average
-      this.depositCode = row.stock_code
-      this.id = row.id
+      this.depositAverage = row.year_average;
+      this.depositCode = row.stock_code;
+      this.id = row.id;
+      this.index = index;
     },
     // 已委托
     handleManaged(index, row) {
@@ -157,6 +165,7 @@ export default {
     cellStyleFun() {
       return "text-align:center";
     },
+    // vux存储拿数据
     handlebuyTrade() {
       this.value = Array.from(this.print);
     },
@@ -164,20 +173,26 @@ export default {
     handleCurrentChange(page) {
       this.pageNum = page;
     },
-    // 买入单条数据
+    // 买入单条托管数据
     async handleSingleData() {
       try {
-        // const date = new FormData();
-        // date.append('id', this.id)
-        // date.append('quantity', this.depositDate)
-        // const res = await buyTrade(date)
-        // this.$store.commit('handleFiltrateAddOne',this.value)
-        // this.handlebuyTrade()
-        // this.dialogTableVisible = false
-        console.log(this.value)
-      } catch (error) {
-        
-      }
+        const date = new FormData();
+        date.append("id", this.id);
+        date.append("quantity", this.depositDate);
+        const res = await buyTrade(date);
+        if (res.data.status) {
+          this.value.forEach((element, index) => {
+            if (this.index === index) {
+              element.status = 1;
+            }
+            this.$store.commit("handleEdit", this.value);
+          });
+          this.dialogTableVisible = false;
+          this.depositDate = "";
+        }
+        this.handlebuyTrade()
+        console.log(this.value);
+      } catch (error) {}
     }
   }
 };
