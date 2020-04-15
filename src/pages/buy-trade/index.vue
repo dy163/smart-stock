@@ -185,7 +185,7 @@ export default {
             if (this.index === index) {
               element.status = 1;
             }
-            this.$store.commit("handleEdit", this.value);
+            this.$store.commit("handleFiltrateAddOne", this.value);
           });
           this.dialogTableVisible = false;
           this.depositDate = "";
