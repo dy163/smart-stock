@@ -36,18 +36,18 @@
               size="mini"
               type="primary"
               @click="handleDeposit(scope.$index, scope.row)"
-              :disabled="scope.status === 0? true: false"
+              :disabled="scope.row.status == 0? false : true "
             >托管</el-button>
-            <el-button
+            <!-- <el-button
               size="mini"
               type="success"
-              :disabled="scope.status === 0? false: true"
+              :disabled="scope.row.status == 0? true : false"
               @click="handleManaged(scope.$index, scope.row)"
-            >已托管</el-button>
+            >已托管</el-button> -->
             <el-button
               size="mini"
               type="danger"
-              :disabled="scope.status === 0? false: true"
+              :disabled="scope.row.status === 2? false : true"
               @click="handleUntrusteeship(scope.$index, scope.row)"
             >不可托管</el-button>
           </template>
