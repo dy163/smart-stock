@@ -11,11 +11,13 @@
             :action="UploadUrl()"
             :before-upload="beforeUploadFile"
             :on-change="fileChange"
+            :on-exceed="exceedFile"
             :on-success="handleSuccess"
             :on-error="handleError"
             :file-list="fileList"
           >
-            <el-button size="small" type="primary" @click="uploadFile">上传Excel</el-button>
+            <el-button size="small" type="primary">上传Excel</el-button>
+            <div class="el-upload__tip" slot="tip">只能上传xlsx文件，且不超过10M</div>
           </el-upload>
         </div>
         <div>
@@ -44,12 +46,12 @@
         <el-table-column prop="amount" label="金额"></el-table-column>
         <el-table-column prop="status" label="委托状态">
           <template slot-scope="scope">
-            <el-tag class="normal"
-            effect="dark"
-            size="mini"
-            :type="screenType[scope.row.status].type">
-            {{ screenType[scope.row.status].label }}
-            </el-tag>
+            <el-tag
+              class="normal"
+              effect="dark"
+              size="mini"
+              :type="screenType[scope.row.status].type"
+            >{{ screenType[scope.row.status].label }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -89,7 +91,8 @@ export default {
     return {
       limitNum: 1, // 上传excell时，同时允许上传的最大数
       fileList: [], // excel文件列表
-      screenType: [ //  状态
+      screenType: [
+        //  状态
         {
           type: "",
           label: "未托管"
@@ -205,6 +208,13 @@ export default {
           });
         });
     },
+    // 文件超出个数限制时的钩子
+    exceedFile(files, fileList) {
+      this.$message.warning(
+        `只能选择 ${this.limitNum} 个文件，当前共选择了 ${files.length +
+          fileList.length} 个`
+      );
+    },
     // 文件状态改变时的钩子
     fileChange(file, fileList) {
       console.log(file.raw);
@@ -237,7 +247,12 @@ export default {
       return "";
     },
     uploadFile() {
-      this.$message.warning("请上传文件");
+      if (this.fileList.length === 0) {
+        this.$message.warning("请上传文件");
+      } else {
+        let form = new FormData();
+        form.append("file", this.fileList);
+      }
     }
   }
 };
@@ -253,6 +268,7 @@ export default {
       display: flex;
       .el-button {
         margin-left: 10px;
+        height: 41px;
       }
     }
   }
