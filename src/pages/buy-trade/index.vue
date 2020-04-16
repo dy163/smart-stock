@@ -191,7 +191,6 @@ export default {
           this.depositDate = "";
         }
         this.handlebuyTrade()
-        console.log(this.value);
       } catch (error) {}
     }
   }

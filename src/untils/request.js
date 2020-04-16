@@ -4,7 +4,6 @@ import { getUser, removeUser, removeUserName } from '@/untils/auth'
 
 const request = axios.create({
   baseURL: 'http://192.168.3.238:8089' 
-  // baseURL: 'http://bourse.yidonghuayuan.com' // 线上
 })
 
 // Add a request interceptor（请求拦截器）

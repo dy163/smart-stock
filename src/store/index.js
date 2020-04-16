@@ -18,11 +18,6 @@ export default new Vuex.Store({
     handleFiltrateAddOne(state, buyEntrust) {
       state.buyEntrust = Object.assign(buyEntrust)
       window.localStorage.setItem('buyEntrust', JSON.stringify(state.buyEntrust))
-    },
-    // 修改单条托管
-    handleEdit(state, buyEntrust) {
-      state.buyEntrust = Object.assign(buyEntrust)
-      window.localStorage.setItem('buyEntrust', JSON.stringify(state.buyEntrust))
     }
   },
   actions: {
