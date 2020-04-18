@@ -1,29 +1,22 @@
 <template>
   <div class="stock-header">
     <div>
-      <p>stock股票系统</p>
+      <img src="@/assets/bond.jpg" alt="">
+      <p>智能股票系统</p>
     </div>
     <div>
-    <div>
+      <div>
         <span>用户名</span>
-        <span>退出</span>
-    </div>
-      <!-- <el-dropdown>
-        <span class="el-dropdown-link">
-          {{ $store.state.user }}
-          <img src="@/assets/logo.png" width="28px">
-          <i class="el-icon-arrow-down el-icon--right"></i>
-        </span>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item @click.native="handleSetting">个人设置</el-dropdown-item>
-          <el-dropdown-item @click.native="handleRemove">退出</el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>-->
+        <span @click="handleRemove">退出</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { userExit } from "@/api/user";
+import { removeUser } from "@/untils/auth";
+
 export default {
   name: "Header",
   data() {
@@ -40,12 +33,12 @@ export default {
       })
         .then(async () => {
           // 清空本地存储中的userInfo
-          // const formData = new FormData()
-          // await userExit(formData)
-          // removeUser()
+          const formData = new FormData()
+          await userExit(formData)
+          removeUser()
           // removeUserName()
-          // // 跳转到登录页
-          // this.$router.push({ name: 'login' })
+          // 跳转到登录页
+          this.$router.push({ name: 'login' })
           this.$message({
             type: "success",
             message: "退出成功!"
@@ -78,6 +71,16 @@ export default {
   height: 60px;
   align-items: center;
   justify-content: space-between;
+  div:nth-child(1) {
+    display: flex;
+    align-items: center;
+    img {
+      height: 35px;
+      width: 35px;
+      margin-right: 8px;
+      border-radius: 10px;
+    }
+  }
   div:nth-child(2) {
     span:nth-child(1) {
       margin-right: 15px;

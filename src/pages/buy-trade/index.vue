@@ -1,7 +1,7 @@
 <template>
   <div class="buy-trade">
     <el-card>
-      <el-button type="primary">一键托管</el-button>
+      <el-button type="primary">订阅行情</el-button>
     </el-card>
     <el-card class="buy-trade-card">
       <el-table
@@ -38,18 +38,6 @@
               @click="handleDeposit(scope.$index, scope.row)"
               :disabled="scope.row.status == 0? false : true "
             >托管</el-button>
-            <!-- <el-button
-              size="mini"
-              type="success"
-              :disabled="scope.row.status == 0? true : false"
-              @click="handleManaged(scope.$index, scope.row)"
-            >已托管</el-button> -->
-            <el-button
-              size="mini"
-              type="danger"
-              :disabled="scope.row.status === 2? false : true"
-              @click="handleUntrusteeship(scope.$index, scope.row)"
-            >不可托管</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -184,6 +172,7 @@ export default {
           this.value.forEach((element, index) => {
             if (this.index === index) {
               element.status = 1;
+              element.quantity = this.depositDate
             }
             this.$store.commit("handleFiltrateAddOne", this.value);
           });

@@ -32,3 +32,25 @@ export const entrustStockList = query => {
     data: query
   })
 }
+
+/**
+ * 16.获取成交列表
+ */
+export const tradeGetkList = query => {
+  return request({
+    method: 'POST',
+    url: '/trade/getList',
+    data: query
+  })
+}
+
+/**
+ * 17.获取成交列表
+ */
+export const excelUpload = query => {
+  return request({
+    method: 'POST',
+    url: '/excel/upload',
+    data: query
+  })
+}

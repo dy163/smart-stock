@@ -15,7 +15,6 @@
         <el-table-column prop="sellableQty" label="可卖数量"></el-table-column>
         <el-table-column prop="avgPrice" label="成本价"></el-table-column>
         <el-table-column prop="unrealizedPnl" label="浮动盈亏"></el-table-column>
-        <el-table-column prop="yesterdayPosition" label="昨日持仓"></el-table-column>
       </el-table>
       <div class="screening-pagination">
         <el-pagination

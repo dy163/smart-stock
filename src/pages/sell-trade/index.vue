@@ -1,113 +1,79 @@
 <template>
-  <div class="sell-trade">
-    <el-card>
+  <div class="shares">
+    <!-- 持仓头部 -->
+    <el-card class="shares-top">
       <el-button type="primary">一键托管</el-button>
     </el-card>
-    <el-card class="sell-trade-card">
-      <el-table
-        :data="tableData"
-        style="width: 100%"
-        :header-cell-style="thStyleFun"
-        :cell-style="cellStyleFun"
-      >
-        <el-table-column prop="date" label="代码" width="140"></el-table-column>
-        <el-table-column prop="name" label="名称" width="140"></el-table-column>
-        <el-table-column prop="address" label="市场" width="140"></el-table-column>
-        <el-table-column prop="address" label="收盘价" width="140"></el-table-column>
-        <el-table-column prop="address" label="开盘价" width="140"></el-table-column>
-        <el-table-column prop="address" label="年线" width="140"></el-table-column>
-        <el-table-column prop="address" label="操作">
-          <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">托管</el-button>
-          <el-button size="mini" type="success" @click="handleDelete(scope.$index, scope.row)">已托管</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">不可托管</el-button>
-        </el-table-column>
+    <!-- 持仓内容 -->
+    <el-card class="shares-content">
+      <el-table :data="stockList" style="width: 100%">
+        <!-- <el-table-column prop="stock_code" label="账号"></el-table-column> -->
+        <el-table-column prop="stock_code" label="股票代码"></el-table-column>
+        <el-table-column prop="stock_name" label="股票名称"></el-table-column>
+        <el-table-column prop="market" label="市场"></el-table-column>
+        <el-table-column prop="totalQty" label="总数量"></el-table-column>
+        <el-table-column prop="sellableQty" label="可卖数量"></el-table-column>
+        <el-table-column prop="avgPrice" label="成本价"></el-table-column>
+        <el-table-column prop="unrealizedPnl" label="浮动盈亏"></el-table-column>
       </el-table>
-    </el-card>
-    <!-- 弹框 -->
-    <el-dialog title="托管数据" :visible.sync="dialogTableVisible" width="35%">
-      <el-form :model="formDate">
-        <el-form-item label="活动名称" :label-width="formLabelWidth">
-          <el-input v-model="formDate.name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="活动名称" :label-width="formLabelWidth">
-          <el-input v-model="formDate.name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="活动名称" :label-width="formLabelWidth">
-          <el-input v-model="formDate.name" autocomplete="off"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogTableVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogTableVisible = false">确 定</el-button>
+      <div class="screening-pagination">
+        <el-pagination
+          :current-page="pageNum"
+          background
+          layout="prev, pager, next"
+          :page-size="pageSize"
+          :total="totalCount"
+          @current-change="handleCurrentChange"
+        ></el-pagination>
       </div>
-    </el-dialog>
+    </el-card>
   </div>
 </template>
 
 <script>
+import { myBuyStockGetList } from "@/api/trade";
+
 export default {
   name: "SellTradeIndex",
   data() {
     return {
-      dialogTableVisible: false,
-      formLabelWidth: "80px",
-      form: {
-        account: "",
-        password: ""
-      },
-      formDate: {
-        name: ""
-      },
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "1518 "
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "1517"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "1519"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "1516"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "1516"
-        }
-      ]
+      pageNum: 1,
+      pageSize: 15,
+      totalCount: 0,
+      stockList: []
     };
   },
-  created() {},
+  created() {
+    this.handleStockList();
+  },
   methods: {
-    handleEdit(index, row) {
-      console.log(index, row);
+    async handleStockList() {
+      try {
+        const date = new FormData();
+        date.append("pageNum", this.pageNum);
+        date.append("pageSize", this.pageSize);
+        const res = await myBuyStockGetList(date);
+        this.stockList = res.data.result.list;
+        this.totalCount = res.data.result.total;
+      } catch (error) {
+        console.log(error, "操作失败");
+      }
     },
-    handleDelete(index, row) {
-      console.log(index, row);
-    },
-    thStyleFun() {
-      return "text-align:center";
-    },
-    cellStyleFun() {
-      return "text-align:center";
+    // 分页
+    handleCurrentChange(page) {
+      this.pageNum = page;
+      this.handleStockList();
     }
   }
 };
 </script>
 
 <style lang='less' scoped>
-.sell-trade-card {
-  margin-top: 10px;
+.shares-top {
+  margin-bottom: 10px;
+}
+.screening-pagination {
+  margin-top: 20px;
+  text-align: center;
 }
 </style>
-

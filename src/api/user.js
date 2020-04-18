@@ -70,9 +70,20 @@ export const userDelete = query => {
  * 7.是否选择账号
  */
 export const userIsSelect = query => {
-    return request({
-      method: 'POST',
-      url: '/account/isSelect',
-      data: query
-    })
-  }
+  return request({
+    method: 'POST',
+    url: '/account/isSelect',
+    data: query
+  })
+}
+
+/**
+ * 8.是否选择账号
+ */
+export const userExit = query => {
+  return request({
+    method: 'POST',
+    url: '/adminUser/exit',
+    data: query
+  })
+}
