@@ -1,7 +1,7 @@
 <template>
   <div class="buy-trade">
     <el-card>
-      <el-button type="primary">订阅行情</el-button>
+      <el-button type="primary" @click.native="handleFiltrateBuySubscribe">订阅行情</el-button>
     </el-card>
     <el-card class="buy-trade-card">
       <el-table
@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import { buyTrade } from "@/api/trade";
+import { buyTrade, filtrateBuySubscribe } from "@/api/trade";
 import { mapState } from "vuex";
 
 export default {
@@ -125,9 +125,10 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      print: state => state.buyEntrust
-    })
+    // ...mapState({
+    //   print: [state => state.buyEntrust]
+    // })
+    ...mapState(['buyEntrust'])
   },
   created() {
     this.handlebuyTrade();
@@ -155,7 +156,12 @@ export default {
     },
     // vux存储拿数据
     handlebuyTrade() {
-      this.value = Array.from(this.print);
+      // if(this.value.length = 0) {
+      //   return
+      // } else {
+      //   this.value = Array.from(this.print);
+      // }
+      this.value =this.buyEntrust;
     },
     // 分页
     handleCurrentChange(page) {
@@ -181,6 +187,15 @@ export default {
         }
         this.handlebuyTrade()
       } catch (error) {}
+    },
+    // 买入订阅行情
+    async handleFiltrateBuySubscribe() {
+      try {
+        const date = new FormData();
+        await filtrateBuySubscribe(date)
+      } catch (error) {
+        console.log(error,'买入订阅行情操作失败')
+      }
     }
   }
 };

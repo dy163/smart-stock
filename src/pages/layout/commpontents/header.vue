@@ -1,12 +1,12 @@
 <template>
   <div class="stock-header">
     <div>
-      <img src="@/assets/bond.jpg" alt="">
+      <img src="@/assets/bond.jpg" alt />
       <p>智能股票系统</p>
     </div>
     <div>
       <div>
-        <span>用户名</span>
+        <span>{{ username }}</span>
         <span @click="handleRemove">退出</span>
       </div>
     </div>
@@ -15,14 +15,23 @@
 
 <script>
 import { userExit } from "@/api/user";
-import { removeUser } from "@/untils/auth";
+import {
+  removeUser,
+  getUserName,
+  removeUserName,
+  removeBuyEntrust
+} from "@/untils/auth";
 
 export default {
   name: "Header",
   data() {
-    return {};
+    return {
+      username: ""
+    };
   },
-  created() {},
+  created() {
+    this.username = getUserName();
+  },
   methods: {
     // 退出
     handleRemove() {
@@ -33,12 +42,14 @@ export default {
       })
         .then(async () => {
           // 清空本地存储中的userInfo
-          const formData = new FormData()
-          await userExit(formData)
-          removeUser()
+          const formData = new FormData();
+          await userExit(formData);
+          removeUser();
+          removeUserName();
+          removeBuyEntrust();
           // removeUserName()
           // 跳转到登录页
-          this.$router.push({ name: 'login' })
+          this.$router.push({ name: "login" });
           this.$message({
             type: "success",
             message: "退出成功!"

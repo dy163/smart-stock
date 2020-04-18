@@ -2,7 +2,7 @@
   <div class="shares">
     <!-- 持仓头部 -->
     <el-card class="shares-top">
-      <el-button type="primary">一键托管</el-button>
+      <el-button type="primary" @click.native="handleFiltrateSellSubscribe">一键托管</el-button>
     </el-card>
     <!-- 持仓内容 -->
     <el-card class="shares-content">
@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { myBuyStockGetList } from "@/api/trade";
+import { myBuyStockGetList, filtrateSellSubscribe } from "@/api/trade";
 
 export default {
   name: "SellTradeIndex",
@@ -63,6 +63,15 @@ export default {
     handleCurrentChange(page) {
       this.pageNum = page;
       this.handleStockList();
+    },
+    //
+    async handleFiltrateSellSubscribe() {
+      try {
+        const date = new FormData();
+        await filtrateSellSubscribe(date)
+      } catch (error) {
+        console.log(error,'卖出一键托管操作失败')
+      }
     }
   }
 };

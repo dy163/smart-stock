@@ -19,7 +19,7 @@
 
 <script>
 import { userLogin, userIsSelect } from "@/api/user";
-import { saveUser } from "@/untils/auth";
+import { saveUser, saveUserName } from "@/untils/auth";
 
 export default {
   name: "Login",
@@ -47,8 +47,9 @@ export default {
         date.append("password", this.form.password);
         const res = await userLogin(date);
         const userInfo = res.data.result.sessionid;
-        // const username = this.form.username;
+        const username = res.data.result.username;
         saveUser(userInfo);
+        saveUserName(username)
         if(res.data.login) {
           this.$router.push("/");
         }

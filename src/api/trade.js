@@ -45,12 +45,23 @@ export const tradeGetkList = query => {
 }
 
 /**
- * 17.获取成交列表
+ * 19.买入行情订阅
  */
-export const excelUpload = query => {
+export const filtrateBuySubscribe = query => {
   return request({
     method: 'POST',
-    url: '/excel/upload',
+    url: '/filtrate/buySubscribe',
+    data: query
+  })
+}
+
+/**
+ * 20.卖出行情订阅
+ */
+export const filtrateSellSubscribe = query => {
+  return request({
+    method: 'POST',
+    url: '/filtrate/sellSubscribe',
     data: query
   })
 }
