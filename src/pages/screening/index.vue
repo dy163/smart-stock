@@ -6,7 +6,7 @@
         <div>
           <el-upload
             class="upload-demo"
-            action="http://192.168.3.238:8089/excel/upload"
+            action="http://smartStock.yidonghuayuan.com/excel/upload"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
             :before-remove="beforeRemove"

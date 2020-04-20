@@ -1,9 +1,10 @@
 import axios from 'axios'
-import { getUser, removeUser, removeUserName } from '@/untils/auth'
+import { getUser, removeUser } from '@/untils/auth'
 // import router from '@/router'
 
 const request = axios.create({
-  baseURL: 'http://192.168.3.238:8089' 
+  // baseURL: 'http://192.168.3.238:8089' 
+  baseURL: 'http://smartStock.yidonghuayuan.com' 
 })
 
 // Add a request interceptor（请求拦截器）
