@@ -100,7 +100,7 @@
           @change="handleCurrentChange"
         >{{ item.account }}</el-radio>
         <div slot="footer" class="dialog-footer">
-          <p @click="handleNoAccount">没有账号？添加账号</p>
+          <a href="javascript:void(0)" @click="handleNoAccount">没有账号？添加账号</a>
           <div>
             <el-button type="primary" @click="handleSure">确 定</el-button>
           </div>
@@ -181,34 +181,40 @@ export default {
       }
     },
     // 添加新账号
-    async handleAdd() {
-      try {
-        const date = new FormData();
-        date.append("account", this.form.acconnt);
-        date.append("password", this.form.password);
-        date.append("trade_key", this.form.trade_key);
-        const res = await userAdd(date);
-        if (res.data.status) {
-          this.$message({
-            message: "添加成功",
-            type: "success"
-          });
-          this.form.acconnt = "";
-          this.form.password = "";
-          this.form.trade_key = "";
-          this.handllGetList();
+    handleAdd() {
+      this.$confirm("确认添加?", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(async () => {
+          const date = new FormData();
+          date.append("account", this.form.acconnt);
+          date.append("password", this.form.password);
+          date.append("trade_key", this.form.trade_key);
+          const res = await userAdd(date);
+          if (res.data.status) {
+            this.$message({
+              message: "添加成功",
+              type: "success"
+            });
+            this.form.acconnt = "";
+            this.form.password = "";
+            this.form.trade_key = "";
+            this.handllGetList();
+          }
+          if (res.data.result == 10003 || res.data.result == 10006) {
+            this.$message.error("添加失败,请重新添加");
+            this.form.acconnt = "";
+            this.form.password = "";
+            this.form.trade_key = "";
+          }
+        })
+        .catch(() => {
+          this.$message({ type: "info", message: "取消添加新账号" });
           this.dialogAdd = false;
           this.dialogTableVisible = true;
-        }
-        if (res.data.result == 10003 || res.data.result == 10006) {
-          this.$message.error("添加失败,请重新添加");
-          this.form.acconnt = "";
-          this.form.password = "";
-          this.form.trade_key = "";
-        }
-      } catch (error) {
-        // console.log(error, "添加操作失败");
-      }
+        });
     },
     // 更新账号
     handleEdit(index, row) {
@@ -270,7 +276,7 @@ export default {
         const res = await userGetList();
         this.accountData = res.data.result;
       } catch (error) {
-        // console.log(error, "操作失败");
+        this.$message.error('操作失败');
       }
     },
     // 选择账号
@@ -281,7 +287,7 @@ export default {
         const res = await userGetList(date);
         this.formOptions.region = res.data.result[0].account;
       } catch (error) {
-        // console.log(error, "操作失败");
+        this.$message.error('操作失败');
       }
     },
     // 自定义索引
@@ -305,7 +311,7 @@ export default {
         this.option = res.data.result;
         this.tableData = res.data.result;
       } catch (error) {
-        // console.log(error, "操作失败");
+        this.$message.error('操作失败');
       }
     },
     // 确定单选框选择账户
@@ -314,13 +320,16 @@ export default {
         const date = new FormData();
         date.append("id", this.valueAcconnt);
         const res = await userSelect(date);
-        if (res.data.status) {
+        if (res.data.result == 10003) {
+          return this.$message({showClose: true,message: "请选择账号",type: "warning"})
+        } else if (res.data.status) {
           this.dialogTableVisible = false;
           this.handleDialogAccount();
           this.handleSelectGetList(this.valueAcconnt);
+          return this.$message({showClose: true,message: "已成功选择账号",type: "success"})
         }
       } catch (error) {
-        // console.log(error, "操作失败");
+        this.$message.error('操作失败');
       }
     },
     thStyleFun() {
