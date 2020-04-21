@@ -1,13 +1,13 @@
 <template>
   <div class="stock-header">
     <div>
-      <img src="@/assets/bond.jpg" alt />
+      <img src="@/assets/yidun.png" alt />
       <p>智能股票系统</p>
     </div>
     <div>
       <div>
         <span>{{ username }}</span>
-        <span @click="handleRemove">退出</span>
+        <el-button @click.native="handleRemove" type="text">退出</el-button>
       </div>
     </div>
   </div>
@@ -97,5 +97,8 @@ export default {
       margin-right: 15px;
     }
   }
+}
+.el-button {
+  color: #000;
 }
 </style>

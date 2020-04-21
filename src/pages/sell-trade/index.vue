@@ -7,7 +7,6 @@
     <!-- 持仓内容 -->
     <el-card class="shares-content">
       <el-table :data="stockList" style="width: 100%">
-        <!-- <el-table-column prop="stock_code" label="账号"></el-table-column> -->
         <el-table-column prop="stock_code" label="股票代码"></el-table-column>
         <el-table-column prop="stock_name" label="股票名称"></el-table-column>
         <el-table-column prop="market" label="市场"></el-table-column>
@@ -17,14 +16,19 @@
         <el-table-column prop="unrealizedPnl" label="浮动盈亏"></el-table-column>
       </el-table>
       <div class="screening-pagination">
-        <el-pagination
-          :current-page="pageNum"
-          background
-          layout="prev, pager, next"
-          :page-size="pageSize"
-          :total="totalCount"
-          @current-change="handleCurrentChange"
-        ></el-pagination>
+        <div>
+          <p>总数：{{ totalCount }}</p>
+        </div>
+        <div>
+          <el-pagination
+            :current-page="pageNum"
+            background
+            layout="prev, pager, next"
+            :page-size="pageSize"
+            :total="totalCount"
+            @current-change="handleCurrentChange"
+          ></el-pagination>
+        </div>
       </div>
     </el-card>
   </div>
@@ -56,7 +60,7 @@ export default {
         this.stockList = res.data.result.list;
         this.totalCount = res.data.result.total;
       } catch (error) {
-        console.log(error, "操作失败");
+        this.$message('获取失败')
       }
     },
     // 分页
@@ -64,14 +68,26 @@ export default {
       this.pageNum = page;
       this.handleStockList();
     },
-    //
-    async handleFiltrateSellSubscribe() {
-      try {
-        const date = new FormData();
-        await filtrateSellSubscribe(date)
-      } catch (error) {
-        console.log(error,'卖出一键托管操作失败')
-      }
+    // 一键托管
+    handleFiltrateSellSubscribe() {
+      this.$confirm("一键托管?", "托管提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(async () => {
+          const date = new FormData();
+          const res = await filtrateSellSubscribe(date);
+          if (res.data.status) {
+            this.$message({
+              message: "一键托管成功",
+              type: "success"
+            });
+          }
+        })
+        .catch(() => {
+          this.$message("一键托管操作取消");
+        });
     }
   }
 };
@@ -83,6 +99,13 @@ export default {
 }
 .screening-pagination {
   margin-top: 20px;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  div:nth-child(1) {
+    p {
+      width: 80px;
+    }
+  }
 }
 </style>

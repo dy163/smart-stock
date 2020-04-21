@@ -6,7 +6,7 @@
         <div>
           <el-upload
             class="upload-demo"
-            action="http://smartStock.yidonghuayuan.com/excel/upload"
+            action="http://47.92.85.1:8089/excel/upload"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
             :before-remove="beforeRemove"
@@ -14,9 +14,8 @@
             :limit="1"
             :on-exceed="handleExceed"
             :file-list="fileList"
-            :data='form'
-            :headers="token" 
-            accept='.xlsx'
+            :headers="token"
+            accept=".xlsx"
           >
             <el-button size="small" type="primary">点击上传excel</el-button>
           </el-upload>
@@ -25,10 +24,10 @@
           <el-input placeholder="请输入股票代码" v-model="stockAccount">
             <template slot="prepend">代码</template>
           </el-input>
-          <el-button type="primary" @click.native="handleFiltrateAddOne">手动筛选</el-button>
+          <el-button type="primary" @click.native="handleFiltrateAddOne">手动添加</el-button>
         </div>
         <div>
-          <el-button type="primary" @click.native="handleBrainPower">智能筛选</el-button>
+          <el-button type="primary" @click.native="handleChoice">智能筛选</el-button>
         </div>
       </div>
     </el-card>
@@ -63,14 +62,19 @@
         <el-table-column prop="remark" label="备注"></el-table-column>
       </el-table>
       <div class="screening-pagination">
-        <el-pagination
-          :current-page="pageNum"
-          background
-          layout="prev, pager, next"
-          :page-size="pageSize"
-          :total="totalCount"
-          @current-change="handleCurrentChange"
-        ></el-pagination>
+        <div>
+          <p>总数：{{ totalCount }}</p>
+        </div>
+        <div>
+          <el-pagination
+            :current-page="pageNum"
+            background
+            layout="prev, pager, next"
+            :page-size="pageSize"
+            :total="totalCount"
+            @current-change="handleCurrentChange"
+          ></el-pagination>
+        </div>
       </div>
     </el-card>
   </div>
@@ -85,16 +89,16 @@ import {
   filtrateAddOne
 } from "@/api/record";
 import { excelUpload } from "@/api/trade";
-import { getUser } from '@/untils/auth'
+import { getUser } from "@/untils/auth";
 import { mapState } from "vuex";
 
 export default {
   name: "ScreeningIndex",
   data() {
     return {
-      token:{
-        token:getUser()
-      } ,
+      token: {
+        token: getUser()
+      },
       form: {
         file: ""
       },
@@ -140,11 +144,15 @@ export default {
         date.append("pageNum", this.pageNum);
         date.append("pageSize", this.pageSize);
         const res = await filtrateGetList(date);
-        this.filtrateList = res.data.result.list;
-        this.totalCount = res.data.result.total;
-        this.$store.commit("handleFiltrateAddOne", this.filtrateList);
+        if (res.data.result == 10020) {
+          return this.$message("请上传文件进行智能筛选");
+        } else {
+          this.filtrateList = res.data.result.list;
+          this.totalCount = res.data.result.total;
+          this.$store.commit("handleFiltrateAddOne", this.filtrateList);
+        }
       } catch (error) {
-        console.log(error, "操作失败");
+        this.$message.error("列表操作获取失败");
       }
     },
     // 分页
@@ -153,43 +161,58 @@ export default {
       this.handleFiltrateGetList();
     },
     // 智能选股
-    async handleBrainPower() {
+    handleChoice() {
       this.handleFiltrateClear();
+      this.handleBrainPower();
+    },
+    async handleBrainPower() {
       try {
         const res = await filtrateAddList();
-        this.filtrateList = res.data.result;
+        if (res.data.result == 10017) {
+          return;
+        } else if (res.data.status) {
+          this.filtrateList = res.data.result;
+          this.$message({ message: "智能筛选成功", type: "success" });
+        }
         this.handleFiltrateGetList();
       } catch (error) {
-        console.log(error, "操作失败");
+        this.$message.error("智能操作失败");
       }
     },
     // 清空列表
     async handleFiltrateClear() {
       try {
         const res = await filtrateClear();
-        this.filtrateList = [];
+        if (res.data.result == 10015) {
+          return;
+        } else {
+          this.filtrateList = [];
+        }
       } catch (error) {
-        console.log(error, "操作失败");
+        this.$message.error("清空列表操作失败");
       }
     },
     // 手动筛选
     async handleFiltrateAddOne() {
       try {
         if (!this.stockAccount) {
-          this.$message({
-            message: "警告哦，请输入股票代码",
-            type: "warning"
-          });
+          this.$message({ message: "警告哦，请输入股票代码", type: "warning" });
         } else {
-          this.handleFiltrateClear();
+          // this.handleFiltrateClear();
           const date = new FormData();
           date.append("stock_code", this.stockAccount);
           const res = await filtrateAddOne(date);
           this.handleFiltrateGetList();
           this.stockAccount = "";
+          if (res.data.status) {
+            this.$message({ message: "添加成功", type: "success" });
+          }
+          if (res.data.result == 10012) {
+            this.$message.error("手动筛选失败");
+          }
         }
       } catch (error) {
-        console.log(error, "操作失败");
+        // console.log(error, "操作失败");
       }
     },
     // 删除单条股票
@@ -217,10 +240,10 @@ export default {
         });
     },
     handleRemove(file, fileList) {
-      console.log(file, fileList);
+      // console.log(file, fileList);
     },
     handlePreview(file) {
-      console.log(file);
+      // console.log(file);
     },
     handleExceed(files, fileList) {
       this.$message.warning(
@@ -231,7 +254,7 @@ export default {
     },
     beforeRemove(file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`);
-    },
+    }
   }
 };
 </script>
@@ -254,6 +277,13 @@ export default {
 }
 .screening-pagination {
   margin-top: 20px;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  div:nth-child(1) {
+    p {
+      width: 80px;
+    }
+  }
 }
 </style>

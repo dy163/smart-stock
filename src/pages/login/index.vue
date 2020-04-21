@@ -26,8 +26,8 @@ export default {
   data() {
     return {
       form: {
-        account: "admin",
-        password: "000000"
+        account: "",
+        password: ""
       },
       back: {
         backgroundImage: "url(" + require("@/assets/back-img/banck.jpg") + ")",
@@ -42,19 +42,37 @@ export default {
   methods: {
     async handleSubmit() {
       try {
-        const date = new FormData();
-        date.append("username", this.form.account);
-        date.append("password", this.form.password);
-        const res = await userLogin(date);
-        const userInfo = res.data.result.sessionid;
-        const username = res.data.result.username;
-        saveUser(userInfo);
-        saveUserName(username)
-        if(res.data.login) {
-          this.$router.push("/");
+        if(!this.form.account || !this.form.password) {
+          this.$message({
+            type: "warning",
+            message: "请正确填写账号或密码"
+          });
+        } else {
+          const date = new FormData();
+          date.append("username", this.form.account);
+          date.append("password", this.form.password);
+          const res = await userLogin(date);
+          if(!res.data.status) {
+            this.$message({
+              type: "warning",
+              message: "请正确填写账号或密码"
+            });
+          } else if(res.data.login) {
+            this.$message({
+              type: "success",
+              message: "登录成功"
+            });
+            const userInfo = res.data.result.sessionid;
+            const username = res.data.result.username;
+            saveUser(userInfo);
+            saveUserName(username)
+            setTimeout(() => {
+              this.$router.push("/");
+            },2000)
+          }
         }
       } catch (error) {
-        console.log(error);
+        this.$message.error('登录操作失败');
       }
     }
   }

@@ -1,18 +1,5 @@
 <template>
   <div class="bargin">
-    <!-- <el-card class="bargin-top">
-      <div class="bargin-header">
-        <p>成交状态:</p>
-        <el-select v-model="val" placeholder="请选择">
-          <el-option
-            v-for="item in options"
-            :key="item.val"
-            :label="item.label"
-            :value="item.val"
-          ></el-option>
-        </el-select>
-      </div>
-    </el-card> -->
     <!-- 内容 -->
     <el-card>
       <el-table :data="barginList" style="width: 100%">
@@ -26,14 +13,19 @@
         <el-table-column prop="trade_type" label="成交类型"></el-table-column>
       </el-table>
       <div class="screening-pagination">
-        <el-pagination
-          :current-page="pageNum"
-          background
-          layout="prev, pager, next"
-          :page-size="pageSize"
-          :total="totalCount"
-          @current-change="handleCurrentChange"
-        ></el-pagination>
+        <div>
+          <p>总数：{{ totalCount }}</p>
+        </div>
+        <div>
+          <el-pagination
+            :current-page="pageNum"
+            background
+            layout="prev, pager, next"
+            :page-size="pageSize"
+            :total="totalCount"
+            @current-change="handleCurrentChange"
+          ></el-pagination>
+        </div>
       </div>
     </el-card>
   </div>
@@ -54,19 +46,19 @@ export default {
   },
   created() {},
   mounted() {
-    this.getTradeGetkList()
+    this.getTradeGetkList();
   },
   methods: {
-    async getTradeGetkList () {
+    async getTradeGetkList() {
       try {
         let date = new FormData();
         date.append("pageNum", this.pageNum);
         date.append("pageSize", this.pageSize);
-        let res = await tradeGetkList(date)
+        let res = await tradeGetkList(date);
         this.barginList = res.data.result.list;
         this.totalCount = res.data.result.total;
       } catch (error) {
-        this.$message.error('错了哦，获取成交列表失败');
+        this.$message.error("错了哦，获取成交列表失败");
       }
     },
     // 分页
@@ -80,13 +72,23 @@ export default {
 
 <style lang='less' scoped>
 .bargin-top {
-  margin-bottom: 10px;
   .bargin-header {
     display: flex;
     align-items: center;
     justify-content: flex-end;
     p {
       margin-right: 15px;
+    }
+  }
+}
+.screening-pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  div:nth-child(1) {
+    p {
+      width: 80px;
     }
   }
 }

@@ -42,33 +42,51 @@
         </el-table-column>
       </el-table>
       <div class="screening-pagination">
-        <el-pagination
+        <div>
+          <p>总数：{{ totalCount }}</p>
+        </div>
+        <div>
+          <el-pagination
+            :current-page="pageNum"
+            background
+            layout="prev, pager, next"
+            :page-size="pageSize"
+            :total="totalCount"
+            @current-change="handleCurrentChange"
+          ></el-pagination>
+        </div>
+        <!-- <el-pagination
           :current-page="pageNum"
           background
           layout="prev, pager, next"
           :page-size="pageSize"
           :total="totalCount"
           @current-change="handleCurrentChange"
-        ></el-pagination>
+        ></el-pagination>-->
       </div>
     </el-card>
     <!-- 弹框 -->
     <el-dialog title="托管数据" :visible.sync="dialogTableVisible" width="25%">
-      <div class="dialog-deposit">
-        <div>
-          <p>代码：</p>
-          <p>{{ depositCode }}</p>
-        </div>
-        <div>
-          <p>年线：</p>
-          <p>{{ depositAverage }}</p>
-        </div>
-        <div>
-          <p>数量：</p>
-          <el-input v-model="depositDate" autocomplete="off" placeholder="请输入数量" />
-        </div>
-        <el-button type="primary" @click.native="handleSingleData">确定</el-button>
-      </div>
+      <el-form ref="form" :model="trusteeship" label-width="auto">
+        <el-form-item label="代码：">
+          <el-input v-model="trusteeship.depositCode"></el-input>
+        </el-form-item>
+        <el-form-item label="年线：">
+          <el-input v-model="trusteeship.depositAverage"></el-input>
+        </el-form-item>
+        <el-form-item label="数量：">
+          <el-input-number
+            v-model="trusteeship.depositNum"
+            :step="100"
+            step-strictly
+            placeholder="请输入数量"
+            :min="0"
+          ></el-input-number>
+        </el-form-item>
+        <el-form-item class="account-btn">
+          <el-button type="primary" @click="handleSingleData">确认</el-button>
+        </el-form-item>
+      </el-form>
     </el-dialog>
   </div>
 </template>
@@ -121,30 +139,32 @@ export default {
           type: "warning",
           label: "已成交"
         }
-      ]
+      ],
+      trusteeship: {
+        depositCode: "",
+        depositAverage: "",
+        depositNum: ""
+      }
     };
   },
   computed: {
     // ...mapState({
     //   print: [state => state.buyEntrust]
     // })
-    ...mapState(['buyEntrust'])
+    ...mapState(["buyEntrust"])
   },
   created() {
     this.handlebuyTrade();
+    this.totalCount = this.value.length
   },
   methods: {
     // 托管
     handleDeposit(index, row) {
       this.dialogTableVisible = true;
-      this.depositAverage = row.year_average;
-      this.depositCode = row.stock_code;
+      this.trusteeship.depositAverage = row.year_average;
+      this.trusteeship.depositCode = row.stock_code;
       this.id = row.id;
       this.index = index;
-    },
-    // 已委托
-    handleManaged(index, row) {
-      console.log(index, row);
     },
     // 不可托管
     handleUntrusteeship(index, row) {},
@@ -156,12 +176,7 @@ export default {
     },
     // vux存储拿数据
     handlebuyTrade() {
-      // if(this.value.length = 0) {
-      //   return
-      // } else {
-      //   this.value = Array.from(this.print);
-      // }
-      this.value =this.buyEntrust;
+      this.value = this.buyEntrust;
     },
     // 分页
     handleCurrentChange(page) {
@@ -172,30 +187,42 @@ export default {
       try {
         const date = new FormData();
         date.append("id", this.id);
-        date.append("quantity", this.depositDate);
+        date.append("quantity", this.trusteeship.depositNum);
         const res = await buyTrade(date);
         if (res.data.status) {
           this.value.forEach((element, index) => {
             if (this.index === index) {
               element.status = 1;
-              element.quantity = this.depositDate
+              element.quantity = this.trusteeship.depositNum;
             }
             this.$store.commit("handleFiltrateAddOne", this.value);
           });
           this.dialogTableVisible = false;
-          this.depositDate = "";
+          this.trusteeship.depositNum = "";
         }
-        this.handlebuyTrade()
+        this.handlebuyTrade();
       } catch (error) {}
     },
     // 买入订阅行情
-    async handleFiltrateBuySubscribe() {
-      try {
-        const date = new FormData();
-        await filtrateBuySubscribe(date)
-      } catch (error) {
-        console.log(error,'买入订阅行情操作失败')
-      }
+    handleFiltrateBuySubscribe() {
+      this.$confirm("确认订阅?", "订阅提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(async () => {
+          const date = new FormData();
+          const res = await filtrateBuySubscribe(date);
+          if (res.data.status) {
+            this.$message({
+              message: "成功订阅",
+              type: "success"
+            });
+          }
+        })
+        .catch(() => {
+          this.$message("买入订阅行情操作取消");
+        });
     }
   }
 };
@@ -205,27 +232,29 @@ export default {
 .buy-trade-card {
   margin-top: 10px;
 }
-.screening-pagination {
-  margin-top: 20px;
-  text-align: center;
-}
-.dialog-deposit {
-  padding: 0 100px;
-  div {
-    height: 50px;
-    display: flex;
-    align-items: center;
+.el-form {
+  .el-input-number {
+    width: 100%;
   }
-  div:nth-child(3) {
-    display: flex;
-    justify-content: space-between;
-    p {
-      width: 60px;
+  .account-btn {
+    margin: 0;
+    /deep/.el-form-item__content {
+      margin: 0 !important;
+    }
+    .el-button--primary {
+      width: 100%;
     }
   }
-  .el-button {
-    margin-top: 20px;
-    width: 100%;
+}
+.screening-pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  div:nth-child(1) {
+    p {
+      width: 80px;
+    }
   }
 }
 </style>

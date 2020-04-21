@@ -33,7 +33,7 @@
         <el-table :data="tableData" style="width: 100%">
           <el-table-column prop="account" label="账号"></el-table-column>
           <el-table-column prop="create_time" label="创建时间"></el-table-column>
-          <el-table-column label="操作" >
+          <el-table-column label="操作">
             <template slot-scope="scope">
               <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">修改</el-button>
               <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
@@ -43,8 +43,15 @@
       </el-card>
     </div>
     <!-- 无账号的展示 -->
-    <el-dialog title="新增账号" :visible.sync="dialogAdd" width="35%" class="acconnt-show">
-      <el-form ref="form" :model="form" label-width="80px">
+    <el-dialog
+      title="新增账号"
+      :show-close="false"
+      :visible.sync="dialogAdd"
+      width="25%"
+      class="acconnt-show"
+      :close-on-click-modal="false"
+    >
+      <el-form ref="form" :model="form" label-width="auto">
         <el-form-item label="账号">
           <el-input v-model="form.acconnt"></el-input>
         </el-form-item>
@@ -60,8 +67,8 @@
       </el-form>
     </el-dialog>
     <!-- 修改账号展示 -->
-    <el-dialog title="修改账号" :visible.sync="dialogAccount" width="35%" class="acconnt-show">
-      <el-form ref="form" :model="formEdit" label-width="80px">
+    <el-dialog title="修改账号" :visible.sync="dialogAccount" width="25%" class="acconnt-show">
+      <el-form ref="form" :model="formEdit" label-width="auto">
         <el-form-item label="账号">
           <el-input v-model="formEdit.acconnt"></el-input>
         </el-form-item>
@@ -152,7 +159,11 @@ export default {
     };
   },
   created() {
-    this.$nextTick(async () => {
+    this.handleStraining();
+  },
+  methods: {
+    async handleStraining() {
+      this.handleSelectGetList(this.valueAcconnt);
       try {
         const date = new FormData();
         const res = await userIsSelect(date);
@@ -168,9 +179,7 @@ export default {
           message: "取消选择账号"
         });
       }
-    });
-  },
-  methods: {
+    },
     // 添加新账号
     async handleAdd() {
       try {
@@ -189,16 +198,23 @@ export default {
           this.form.trade_key = "";
           this.handllGetList();
           this.dialogAdd = false;
-        } else {
-          this.$message.error("错了哦，删除失败");
+          this.dialogTableVisible = true;
+        }
+        if (res.data.result == 10003 || res.data.result == 10006) {
+          this.$message.error("添加失败,请重新添加");
+          this.form.acconnt = "";
+          this.form.password = "";
+          this.form.trade_key = "";
         }
       } catch (error) {
-        console.log(error, "添加操作失败");
+        // console.log(error, "添加操作失败");
       }
     },
     // 更新账号
     handleEdit(index, row) {
       this.editId = row.id;
+      this.formEdit.acconnt = row.account;
+      this.formEdit.trade_key = row.trade_key;
       this.dialogAccount = true;
     },
     async handleEditDefine() {
@@ -235,11 +251,11 @@ export default {
           const date = new FormData();
           date.append("id", row.id);
           await userDelete(date);
+          this.handleDialogAccount(); // 更新列表
           this.$message({
             type: "success",
             message: "删除成功!"
           });
-          this.handllGetList(); // 更新列表
         })
         .catch(() => {
           this.$message({
@@ -254,7 +270,7 @@ export default {
         const res = await userGetList();
         this.accountData = res.data.result;
       } catch (error) {
-        console.log(error, "操作失败");
+        // console.log(error, "操作失败");
       }
     },
     // 选择账号
@@ -265,7 +281,7 @@ export default {
         const res = await userGetList(date);
         this.formOptions.region = res.data.result[0].account;
       } catch (error) {
-        console.log(error, "操作失败");
+        // console.log(error, "操作失败");
       }
     },
     // 自定义索引
@@ -279,7 +295,8 @@ export default {
     },
     // 选择账号
     handleCurrentChange(val) {
-      this.valueAcconnt = val;
+      window.localStorage.setItem("val", val);
+      this.valueAcconnt = window.localStorage.getItem("val");
     },
     // 在次调用账号列表
     async handleDialogAccount() {
@@ -288,7 +305,7 @@ export default {
         this.option = res.data.result;
         this.tableData = res.data.result;
       } catch (error) {
-        console.log(error, "操作失败");
+        // console.log(error, "操作失败");
       }
     },
     // 确定单选框选择账户
@@ -303,14 +320,14 @@ export default {
           this.handleSelectGetList(this.valueAcconnt);
         }
       } catch (error) {
-        console.log(error, "操作失败");
+        // console.log(error, "操作失败");
       }
     },
     thStyleFun() {
-      return 'text-align:center'
+      return "text-align:center";
     },
     cellStyleFun() {
-      return 'text-align:center'
+      return "text-align:center";
     }
   }
 };
@@ -333,7 +350,6 @@ export default {
 }
 .acconnt-show {
   .el-form {
-    width: 500px;
     .account-btn {
       margin: 0;
       .el-button {
@@ -347,7 +363,6 @@ export default {
   .el-tag--danger {
     margin-left: 10px;
   }
-
 }
 .nil-account {
   /deep/.el-dialog {

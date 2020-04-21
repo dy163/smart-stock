@@ -5,6 +5,7 @@ import { getUser, removeUser } from '@/untils/auth'
 const request = axios.create({
   // baseURL: 'http://192.168.3.238:8089' 
   baseURL: 'http://smartStock.yidonghuayuan.com' 
+  // baseURL: 'http://47.92.85.1:8089' 
 })
 
 // Add a request interceptor（请求拦截器）
