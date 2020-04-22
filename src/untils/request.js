@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getUser, removeUser } from '@/untils/auth'
+import { getUser, removeUser, removeUserName } from '@/untils/auth'
 // import router from '@/router'
 
 const request = axios.create({
@@ -24,11 +24,12 @@ request.interceptors.request.use(
 // Add a response interceptor(响应拦截器)
 request.interceptors.response.use(function (response) {
   // Do something with response data
-  if(response.data.result === 10000) {
+  if(response.data.result == 10000) {
     removeUser()
+    removeUserName()
     this.$router.push('/login')
   } else {
-  return response
+    return response
   }
   // return response
 }, function (error) {

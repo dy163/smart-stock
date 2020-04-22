@@ -163,7 +163,7 @@ export default {
   },
   methods: {
     async handleStraining() {
-      this.handleSelectGetList(this.valueAcconnt);
+      // this.handleSelectGetList(this.valueAcconnt);
       try {
         const date = new FormData();
         const res = await userIsSelect(date);

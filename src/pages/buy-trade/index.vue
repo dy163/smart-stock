@@ -42,37 +42,28 @@
         </el-table-column>
       </el-table>
       <div class="screening-pagination">
-        <div>
-          <p>总数：{{ totalCount }}</p>
-        </div>
-        <div>
-          <el-pagination
-            :current-page="pageNum"
-            background
-            layout="prev, pager, next"
-            :page-size="pageSize"
-            :total="totalCount"
-            @current-change="handleCurrentChange"
-          ></el-pagination>
-        </div>
-        <!-- <el-pagination
-          :current-page="pageNum"
+        <el-pagination
           background
-          layout="prev, pager, next"
-          :page-size="pageSize"
-          :total="totalCount"
+          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-        ></el-pagination>-->
+          :current-page.sync="pageNum"
+          :page-sizes="pageSize"
+          :page-size="100"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalCount"
+        ></el-pagination>
       </div>
     </el-card>
     <!-- 弹框 -->
     <el-dialog title="托管数据" :visible.sync="dialogTableVisible" width="25%">
       <el-form ref="form" :model="trusteeship" label-width="auto">
         <el-form-item label="代码：">
-          <el-input v-model="trusteeship.depositCode"></el-input>
+          <!-- <el-input v-model="trusteeship.depositCode" disabled></el-input> -->
+          <p>{{ trusteeship.depositCode }}</p>
         </el-form-item>
         <el-form-item label="年线：">
-          <el-input v-model="trusteeship.depositAverage"></el-input>
+          <!-- <el-input v-model="trusteeship.depositAverage" disabled></el-input> -->
+          <p>{{ trusteeship.depositAverage }}</p>
         </el-form-item>
         <el-form-item label="数量：">
           <el-input-number
@@ -93,6 +84,7 @@
 
 <script>
 import { buyTrade, filtrateBuySubscribe } from "@/api/trade";
+import { filtrateGetList } from "@/api/record";
 import { mapState } from "vuex";
 
 export default {
@@ -102,7 +94,7 @@ export default {
       dialogTableVisible: false,
       formLabelWidth: "80px",
       pageNum: 1,
-      pageSize: 15,
+      pageSize: [10, 15, 20, 25, 30],
       totalCount: 0,
       depositCode: [], // 弹框代码展示
       value: [], // 表格绑定值
@@ -151,11 +143,17 @@ export default {
     // ...mapState({
     //   print: [state => state.buyEntrust]
     // })
-    ...mapState(["buyEntrust"])
+    ...mapState(["buyEntrust"]),
+    size() {
+      return {
+        sizenum: 10
+      };
+    }
   },
   created() {
     this.handlebuyTrade();
-    this.totalCount = this.value.length
+    // this.totalCount = this.value.length;
+    this.handleRetrieveData();
   },
   methods: {
     // 托管
@@ -166,8 +164,6 @@ export default {
       this.id = row.id;
       this.index = index;
     },
-    // 不可托管
-    handleUntrusteeship(index, row) {},
     thStyleFun() {
       return "text-align:center";
     },
@@ -176,11 +172,33 @@ export default {
     },
     // vux存储拿数据
     handlebuyTrade() {
-      this.value = this.buyEntrust;
+      // this.value = this.buyEntrust;
     },
     // 分页
+    handleSizeChange(val) {
+      this.size.sizenum = `${val}`;
+      this.handleRetrieveData();
+    },
     handleCurrentChange(page) {
       this.pageNum = page;
+      this.handleRetrieveData();
+    },
+    // 获取筛选数据
+    async handleRetrieveData() {
+      try {
+        const date = new FormData();
+        date.append("pageNum", this.pageNum);
+        date.append("pageSize", this.size.sizenum);
+        const res = await filtrateGetList(date);
+        if (res.data.result == 10020) {
+          return this.$message("请上传文件进行智能筛选");
+        } else {
+          this.value = res.data.result.list;
+          this.totalCount = res.data.result.total;
+        }
+      } catch (error) {
+        this.$message.error("列表操作获取失败");
+      }
     },
     // 买入单条托管数据
     async handleSingleData() {
@@ -248,13 +266,6 @@ export default {
 }
 .screening-pagination {
   margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  div:nth-child(1) {
-    p {
-      width: 80px;
-    }
-  }
+  text-align: center;
 }
 </style>

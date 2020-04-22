@@ -41,19 +41,26 @@ export default {
         type: "warning"
       })
         .then(async () => {
-          // 清空本地存储中的userInfo
-          const formData = new FormData();
-          await userExit(formData);
-          removeUser();
-          removeUserName();
-          removeBuyEntrust();
-          // removeUserName()
-          // 跳转到登录页
-          this.$router.push({ name: "login" });
-          this.$message({
-            type: "success",
-            message: "退出成功!"
-          });
+          try {
+            // 清空本地存储中的userInfo
+            const formData = new FormData();
+            await userExit(formData);
+            removeUser();
+            removeUserName();
+            removeBuyEntrust();
+            // removeUserName()
+            // 跳转到登录页
+            this.$router.push({ name: "login" });
+            this.$message({
+              type: "success",
+              message: "退出成功!"
+            });
+          } catch (error) {
+            this.$message({
+              type: "info",
+              message: "操作失败"
+            });
+          }
         })
         .catch(() => {
           this.$message({

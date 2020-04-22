@@ -62,19 +62,16 @@
         <el-table-column prop="remark" label="备注"></el-table-column>
       </el-table>
       <div class="screening-pagination">
-        <div>
-          <p>总数：{{ totalCount }}</p>
-        </div>
-        <div>
-          <el-pagination
-            :current-page="pageNum"
-            background
-            layout="prev, pager, next"
-            :page-size="pageSize"
-            :total="totalCount"
-            @current-change="handleCurrentChange"
-          ></el-pagination>
-        </div>
+        <el-pagination
+          background
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page.sync="pageNum"
+          :page-sizes="pageSize"
+          :page-size="100"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalCount"
+        ></el-pagination>
       </div>
     </el-card>
   </div>
@@ -129,9 +126,16 @@ export default {
       stockAccount: "", // 手动筛选
       filtrateList: [],
       pageNum: 1,
-      pageSize: 15,
+      pageSize: [10, 15, 20, 25, 30],
       totalCount: 0
     };
+  },
+  computed: {
+    size() {
+      return {
+        sizenum: 10
+      }
+    }
   },
   created() {
     this.handleFiltrateGetList();
@@ -142,7 +146,7 @@ export default {
       try {
         const date = new FormData();
         date.append("pageNum", this.pageNum);
-        date.append("pageSize", this.pageSize);
+        date.append("pageSize", this.size.sizenum);
         const res = await filtrateGetList(date);
         if (res.data.result == 10020) {
           return this.$message("请上传文件进行智能筛选");
@@ -156,6 +160,10 @@ export default {
       }
     },
     // 分页
+    handleSizeChange(val) {
+      this.size.sizenum = `${val}`
+      this.handleFiltrateGetList();
+    },
     handleCurrentChange(page) {
       this.pageNum = page;
       this.handleFiltrateGetList();
@@ -277,13 +285,6 @@ export default {
 }
 .screening-pagination {
   margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  div:nth-child(1) {
-    p {
-      width: 80px;
-    }
-  }
+  text-align: center;
 }
 </style>
