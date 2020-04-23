@@ -92,11 +92,13 @@ export default {
   div:nth-child(1) {
     display: flex;
     align-items: center;
+    color: #fff;
     img {
       height: 35px;
       width: 35px;
       margin-right: 8px;
       border-radius: 10px;
+      color: #fff;
     }
   }
   div:nth-child(2) {
@@ -106,6 +108,6 @@ export default {
   }
 }
 .el-button {
-  color: #000;
+  color: #fff;
 }
 </style>

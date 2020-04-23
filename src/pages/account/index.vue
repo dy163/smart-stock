@@ -1,47 +1,45 @@
 <template>
   <div class="account">
-    <div>
-      <!-- 有账号的展示 -->
-      <el-card>
-        <div class="account-card">
-          <div>
-            <el-button type="primary" @click="dialogAdd = true">新增</el-button>
-          </div>
-          <div>
-            <el-form ref="form" :model="formOptions" label-width="80px">
-              <el-form-item label="当前账号:">
-                <!-- <span class="account-card-span">{{ variAccount }}</span> -->
-                <el-select
-                  v-model="formOptions.region"
-                  placeholder="请选择"
-                  @change="handleSelectGetList"
-                >
-                  <el-option
-                    v-for="item in option"
-                    :key="item.id"
-                    :label="item.account"
-                    :value="item.id"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
-            </el-form>
-          </div>
+    <!-- 有账号的展示 -->
+    <el-card>
+      <div class="account-card">
+        <div>
+          <el-button type="primary" @click="dialogAdd = true">新增</el-button>
         </div>
-      </el-card>
-      <!-- 内容展示 -->
-      <el-card class="box-card">
-        <el-table :data="tableData" style="width: 100%">
-          <el-table-column prop="account" label="账号"></el-table-column>
-          <el-table-column prop="create_time" label="创建时间"></el-table-column>
-          <el-table-column label="操作">
-            <template slot-scope="scope">
-              <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">修改</el-button>
-              <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-card>
-    </div>
+        <div>
+          <el-form ref="form" :model="formOptions" label-width="80px">
+            <el-form-item label="当前账号:">
+              <!-- <span class="account-card-span">{{ variAccount }}</span> -->
+              <el-select
+                v-model="formOptions.region"
+                placeholder="请选择"
+                @change="handleSelectGetList"
+              >
+                <el-option
+                  v-for="item in option"
+                  :key="item.id"
+                  :label="item.account"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </div>
+      </div>
+    </el-card>
+    <!-- 内容展示 -->
+    <el-card class="box-card">
+      <el-table :data="tableData" style="width: 100%">
+        <el-table-column prop="account" label="账号"></el-table-column>
+        <el-table-column prop="create_time" label="创建时间"></el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">修改</el-button>
+            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
     <!-- 无账号的展示 -->
     <el-dialog
       title="新增账号"
@@ -276,7 +274,7 @@ export default {
         const res = await userGetList();
         this.accountData = res.data.result;
       } catch (error) {
-        this.$message.error('操作失败');
+        this.$message.error("操作失败");
       }
     },
     // 选择账号
@@ -287,7 +285,7 @@ export default {
         const res = await userGetList(date);
         this.formOptions.region = res.data.result[0].account;
       } catch (error) {
-        this.$message.error('操作失败');
+        this.$message.error("操作失败");
       }
     },
     // 自定义索引
@@ -311,7 +309,7 @@ export default {
         this.option = res.data.result;
         this.tableData = res.data.result;
       } catch (error) {
-        this.$message.error('操作失败');
+        this.$message.error("操作失败");
       }
     },
     // 确定单选框选择账户
@@ -321,15 +319,23 @@ export default {
         date.append("id", this.valueAcconnt);
         const res = await userSelect(date);
         if (res.data.result == 10003) {
-          return this.$message({showClose: true,message: "请选择账号",type: "warning"})
+          return this.$message({
+            showClose: true,
+            message: "请选择账号",
+            type: "warning"
+          });
         } else if (res.data.status) {
           this.dialogTableVisible = false;
           this.handleDialogAccount();
           this.handleSelectGetList(this.valueAcconnt);
-          return this.$message({showClose: true,message: "已成功选择账号",type: "success"})
+          return this.$message({
+            showClose: true,
+            message: "已成功选择账号",
+            type: "success"
+          });
         }
       } catch (error) {
-        this.$message.error('操作失败');
+        this.$message.error("操作失败");
       }
     },
     thStyleFun() {

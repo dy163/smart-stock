@@ -1,8 +1,14 @@
 <template>
   <div class="buy-trade">
-    <el-card>
-      <el-button type="primary" @click.native="handleFiltrateBuySubscribe">订阅行情</el-button>
-      <el-button type="primary" @click.native="handleFiltrateBuyAllEntrust">一键托管</el-button>
+    <el-card class="buy-trade-header">
+      <div>
+        <p>
+          <el-button type="primary" @click.native="handleFiltrateBuySubscribe">订阅行情</el-button>
+        </p>
+        <p>
+          <el-button type="primary" @click.native="handleFiltrateBuyAllEntrust">一键托管</el-button>
+        </p>
+      </div>
     </el-card>
     <el-card class="buy-trade-card">
       <el-table
@@ -81,33 +87,34 @@
       </el-form>
     </el-dialog>
     <!-- 一键托管弹框 -->
-    <el-dialog title="托管数据" :visible.sync="dialogAllEntrust" width="25%">
-      <el-form ref="form" :model="trusteeship" label-width="auto">
-        <el-form-item label="代码：">
-          <p>{{ trusteeship.depositCode }}</p>
-        </el-form-item>
-        <el-form-item label="年线：">
-          <p>{{ trusteeship.depositAverage }}</p>
-        </el-form-item>
-        <el-form-item label="数量：">
-          <el-input-number
-            v-model="trusteeship.depositNum"
-            :step="100"
-            step-strictly
-            placeholder="请输入数量"
-            :min="0"
-          ></el-input-number>
-        </el-form-item>
-        <el-form-item class="account-btn">
-          <el-button type="primary" @click="handleSingleData">确认</el-button>
-        </el-form-item>
-      </el-form>
+    <el-dialog title="一键托管" :visible.sync="dialogAllEntrust" width="25%" class="diaEntrust">
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="数量" name="first">
+          <el-form label-width="auto" :model="allNum">
+            <el-form-item label="数量：">
+              <el-input-number v-model="allNum.um" @change="handleChange" :min="0" :step="100"></el-input-number>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="金额" name="second">
+          <el-form label-width="auto" :model="allMoney">
+            <el-form-item label="数量：">
+              <el-input v-model="allMoney.money"></el-input>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+      </el-tabs>
+      <el-button type="primary" @click.native="handleConfirm">确定</el-button>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { buyTrade, filtrateBuySubscribe } from "@/api/trade";
+import {
+  buyTrade,
+  filtrateBuySubscribe,
+  filtratebuyAllEntrust
+} from "@/api/trade";
 import { filtrateGetList } from "@/api/record";
 import { mapState } from "vuex";
 
@@ -115,6 +122,7 @@ export default {
   name: "BuyTradeIndex",
   data() {
     return {
+      activeName: "first",
       dialogAllEntrust: false,
       dialogTableVisible: false,
       formLabelWidth: "80px",
@@ -161,6 +169,12 @@ export default {
         depositCode: "",
         depositAverage: "",
         depositNum: ""
+      },
+      allNum: {
+        num: ""
+      },
+      allMoney: {
+        money: ""
       }
     };
   },
@@ -269,7 +283,40 @@ export default {
     },
     // 一键托管（金额和数量）
     handleFiltrateBuyAllEntrust() {
-      this.dialogAllEntrust = true
+      this.dialogAllEntrust = true;
+    },
+    handleClick(tab, event) {
+      // console.log(tab, event);
+    },
+    handleChange(val) {
+      this.allMoney.num = val;
+    },
+    async handleConfirm() {
+      try {
+        if (this.activeName === "first") {
+          const date = new FormData();
+          date.append("way", "quantity");
+          date.append("quantity", this.allMoney.num);
+          const res = await filtratebuyAllEntrust(date);
+          if (res.data.status) {
+            this.handleRetrieveData();
+            this.dialogAllEntrust = false;
+            this.allMoney.num = "";
+          }
+        } else {
+          const date = new FormData();
+          date.append("way", "amount");
+          date.append("amount", this.allMoney.money);
+          const res = await filtratebuyAllEntrust(date);
+          if (res.data.status) {
+            this.handleRetrieveData();
+            this.dialogAllEntrust = false;
+            this.allMoney.money = "";
+          }
+        }
+      } catch (error) {
+        this.$message.error("操作失败");
+      }
     }
   }
 };
@@ -296,5 +343,16 @@ export default {
 .screening-pagination {
   margin-top: 20px;
   text-align: center;
+}
+.buy-trade-header {
+  div {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+.diaEntrust {
+  .el-button--primary {
+    width: 100%;
+  }
 }
 </style>

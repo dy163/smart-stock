@@ -42,10 +42,10 @@ export default {
   height: 100%;
 }
 .el-aside {
-  background-color: #20212A;
+  background-color: #333443;
 }
 .el-header {
-  background-color: #ffffff;
+  background-color: #333443;
 }
 .el-main {
   background-color: #ffffff;

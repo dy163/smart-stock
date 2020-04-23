@@ -65,3 +65,14 @@ export const filtrateSellSubscribe = query => {
     data: query
   })
 }
+
+/**
+ * 21.卖出行情订阅
+ */
+export const filtratebuyAllEntrust = query => {
+  return request({
+    method: 'POST',
+    url: '/filtrate/buyAllEntrust',
+    data: query
+  })
+}

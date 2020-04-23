@@ -1,30 +1,35 @@
 <template>
   <div class="bargin">
-    <!-- 内容 -->
     <el-card>
-      <el-table :data="barginList" style="width: 100%">
-        <el-table-column prop="stock_code" label="股票代码"></el-table-column>
-        <el-table-column prop="market" label="市场"></el-table-column>
-        <el-table-column prop="exec_id" label="成交编号"></el-table-column>
-        <el-table-column prop="price" label="价格"></el-table-column>
-        <el-table-column prop="quantity" label="总数量"></el-table-column>
-        <el-table-column prop="trade_amount" label="成交金额"></el-table-column>
-        <el-table-column prop="trade_time" label="成交时间"></el-table-column>
-        <el-table-column prop="trade_type" label="成交类型"></el-table-column>
-      </el-table>
-      <!-- 分页 -->
-      <div class="screening-pagination">
-        <el-pagination
-          background
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page.sync="pageNum"
-          :page-sizes="pageSize"
-          :page-size="100"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="totalCount"
-        ></el-pagination>
-      </div>
+      <el-card class="bargin-top">
+        <p>成交列表</p>
+      </el-card>
+      <!-- 内容 -->
+      <el-card>
+        <el-table :data="barginList" style="width: 100%">
+          <el-table-column prop="stock_code" label="股票代码"></el-table-column>
+          <el-table-column prop="market" label="市场"></el-table-column>
+          <el-table-column prop="exec_id" label="成交编号"></el-table-column>
+          <el-table-column prop="price" label="价格"></el-table-column>
+          <el-table-column prop="quantity" label="总数量"></el-table-column>
+          <el-table-column prop="trade_amount" label="成交金额"></el-table-column>
+          <el-table-column prop="trade_time" label="成交时间"></el-table-column>
+          <el-table-column prop="trade_type" label="成交类型"></el-table-column>
+        </el-table>
+        <!-- 分页 -->
+        <div class="screening-pagination">
+          <el-pagination
+            background
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="pageNum"
+            :page-sizes="pageSize"
+            :page-size="100"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="totalCount"
+          ></el-pagination>
+        </div>
+      </el-card>
     </el-card>
   </div>
 </template>
@@ -80,14 +85,7 @@ export default {
 
 <style lang='less' scoped>
 .bargin-top {
-  .bargin-header {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    p {
-      margin-right: 15px;
-    }
-  }
+  margin-bottom: 10px;
 }
 .screening-pagination {
   margin-top: 20px;
