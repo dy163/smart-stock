@@ -33,7 +33,7 @@
     </el-card>
     <!-- 筛选内容 -->
     <el-card>
-      <el-table :data="filtrateList" style="width: 100%">
+      <el-table :data="filtrateList" style="width: 100%" :row-class-name="tableRowClassName">
         <el-table-column prop="account" label="账号名" width="120"></el-table-column>
         <el-table-column prop="stock_code" label="股票代码"></el-table-column>
         <el-table-column prop="stock_name" label="股票名称"></el-table-column>
@@ -134,13 +134,20 @@ export default {
     size() {
       return {
         sizenum: 10
-      }
+      };
     }
   },
   created() {
     this.handleFiltrateGetList();
   },
   methods: {
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 ==1) {
+        return "warning-row";
+      } else {
+        return "success-row";
+      }
+    },
     // 获取股票列表
     async handleFiltrateGetList() {
       try {
@@ -161,7 +168,7 @@ export default {
     },
     // 分页
     handleSizeChange(val) {
-      this.size.sizenum = `${val}`
+      this.size.sizenum = `${val}`;
       this.handleFiltrateGetList();
     },
     handleCurrentChange(page) {
@@ -286,5 +293,12 @@ export default {
 .screening-pagination {
   margin-top: 20px;
   text-align: center;
+}
+/deep/.el-table .warning-row {
+  background: oldlace;
+}
+
+/deep/.el-table .success-row {
+  background: #f0f9eb;
 }
 </style>

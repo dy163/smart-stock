@@ -5,12 +5,12 @@
       class="el-menu-vertical-demo"
       @open="handleOpen"
       @close="handleClose"
-      background-color="#5092b8"
+      background-color="#20212A"
       text-color="#fff"
-      active-text-color="#ffd04b"
+      active-text-color="#167ddd"
       :router="true"
     >
-      <el-menu-item index="/">
+      <el-menu-item index="/" class="aside-account">
         <span slot="title">账户管理</span>
       </el-menu-item>
       <el-menu-item index="/screening">
@@ -62,4 +62,16 @@ export default {
 /deep/.el-menu {
   border-right: 0;
 }
+/deep/.el-menu-item-group__title {
+  padding: 0;
+}
+// .aside-account {
+//   border-top: 0.5px solid #14151C;
+// }
+// /deep/.el-submenu__title {
+//   border-bottom: 0.5px solid #14151C;        
+// }
+// .el-menu-item {
+//   border-bottom: 0.5px solid #14151C;
+// }
 </style>

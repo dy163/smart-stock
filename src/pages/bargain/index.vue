@@ -12,20 +12,18 @@
         <el-table-column prop="trade_time" label="成交时间"></el-table-column>
         <el-table-column prop="trade_type" label="成交类型"></el-table-column>
       </el-table>
+      <!-- 分页 -->
       <div class="screening-pagination">
-        <div>
-          <p>总数：{{ totalCount }}</p>
-        </div>
-        <div>
-          <el-pagination
-            :current-page="pageNum"
-            background
-            layout="prev, pager, next"
-            :page-size="pageSize"
-            :total="totalCount"
-            @current-change="handleCurrentChange"
-          ></el-pagination>
-        </div>
+        <el-pagination
+          background
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page.sync="pageNum"
+          :page-sizes="pageSize"
+          :page-size="100"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalCount"
+        ></el-pagination>
       </div>
     </el-card>
   </div>
@@ -39,12 +37,18 @@ export default {
   data() {
     return {
       pageNum: 1,
-      pageSize: 15,
+      pageSize: [10, 15, 20, 25, 30],
       totalCount: 0,
       barginList: []
     };
   },
-  created() {},
+  computed: {
+    size() {
+      return {
+        sizenum: 10
+      };
+    }
+  },
   mounted() {
     this.getTradeGetkList();
   },
@@ -53,7 +57,7 @@ export default {
       try {
         let date = new FormData();
         date.append("pageNum", this.pageNum);
-        date.append("pageSize", this.pageSize);
+        date.append("pageSize", this.size.sizenum);
         let res = await tradeGetkList(date);
         this.barginList = res.data.result.list;
         this.totalCount = res.data.result.total;
@@ -62,6 +66,10 @@ export default {
       }
     },
     // 分页
+    handleSizeChange(val) {
+      this.size.sizenum = `${val}`;
+      this.getTradeGetkList();
+    },
     handleCurrentChange(page) {
       this.pageNum = page;
       this.getTradeGetkList();
@@ -83,13 +91,6 @@ export default {
 }
 .screening-pagination {
   margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  div:nth-child(1) {
-    p {
-      width: 80px;
-    }
-  }
+  text-align: center;
 }
 </style>

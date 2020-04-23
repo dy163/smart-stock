@@ -5,7 +5,7 @@
         <Header />
       </el-header>
       <el-container>
-        <el-aside width="180px">
+        <el-aside width="200px">
           <Aside />
         </el-aside>
         <el-main>
@@ -42,12 +42,12 @@ export default {
   height: 100%;
 }
 .el-aside {
-  background-color: #5092b8;
+  background-color: #20212A;
 }
 .el-header {
-  background-color: #a9a3be;
+  background-color: #ffffff;
 }
 .el-main {
-  background-color: #c0b6c2;
+  background-color: #ffffff;
 }
 </style>

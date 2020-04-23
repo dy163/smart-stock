@@ -2,6 +2,7 @@
   <div class="buy-trade">
     <el-card>
       <el-button type="primary" @click.native="handleFiltrateBuySubscribe">订阅行情</el-button>
+      <el-button type="primary" @click.native="handleFiltrateBuyAllEntrust">一键托管</el-button>
     </el-card>
     <el-card class="buy-trade-card">
       <el-table
@@ -79,6 +80,29 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+    <!-- 一键托管弹框 -->
+    <el-dialog title="托管数据" :visible.sync="dialogAllEntrust" width="25%">
+      <el-form ref="form" :model="trusteeship" label-width="auto">
+        <el-form-item label="代码：">
+          <p>{{ trusteeship.depositCode }}</p>
+        </el-form-item>
+        <el-form-item label="年线：">
+          <p>{{ trusteeship.depositAverage }}</p>
+        </el-form-item>
+        <el-form-item label="数量：">
+          <el-input-number
+            v-model="trusteeship.depositNum"
+            :step="100"
+            step-strictly
+            placeholder="请输入数量"
+            :min="0"
+          ></el-input-number>
+        </el-form-item>
+        <el-form-item class="account-btn">
+          <el-button type="primary" @click="handleSingleData">确认</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -91,6 +115,7 @@ export default {
   name: "BuyTradeIndex",
   data() {
     return {
+      dialogAllEntrust: false,
       dialogTableVisible: false,
       formLabelWidth: "80px",
       pageNum: 1,
@@ -241,6 +266,10 @@ export default {
         .catch(() => {
           this.$message("买入订阅行情操作取消");
         });
+    },
+    // 一键托管（金额和数量）
+    handleFiltrateBuyAllEntrust() {
+      this.dialogAllEntrust = true
     }
   }
 };
