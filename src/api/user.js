@@ -87,3 +87,14 @@ export const userExit = query => {
     data: query
   })
 }
+
+/**
+ * 9.获取账户资金详情
+ */
+export const userAssetGetDetail = query => {
+  return request({
+    method: 'POST',
+    url: '/asset/getDetail',
+    data: query
+  })
+}

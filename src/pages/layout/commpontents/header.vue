@@ -1,7 +1,9 @@
 <template>
   <div class="stock-header">
     <div>
-      <img src="@/assets/yidun.png" alt />
+      <p>
+        <img src="@/assets/yidun.png" alt />
+      </p>
       <p>智能股票系统</p>
     </div>
     <div>
@@ -93,12 +95,16 @@ export default {
     display: flex;
     align-items: center;
     color: #fff;
-    img {
-      height: 35px;
+    p:nth-child(1) {
+      height: 32px;
       width: 35px;
+      background-color: #fff;
       margin-right: 8px;
       border-radius: 10px;
-      color: #fff;
+      img {
+        width: 100%;
+        border-radius: 10px;
+      }
     }
   }
   div:nth-child(2) {

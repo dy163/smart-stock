@@ -6,7 +6,7 @@
     </el-card>
     <!-- 持仓内容 -->
     <el-card class="shares-content">
-      <el-table :data="stockList" style="width: 100%">
+      <el-table :data="stockList" style="width: 100%" :row-class-name="tableRowClassName">
         <el-table-column prop="stock_code" label="股票代码"></el-table-column>
         <el-table-column prop="stock_name" label="股票名称"></el-table-column>
         <el-table-column prop="market" label="市场"></el-table-column>
@@ -96,7 +96,15 @@ export default {
         .catch(() => {
           this.$message("一键托管操作取消");
         });
-    }
+    },
+    // 隔行变色
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 ==1) {
+        return "warning-row";
+      } else {
+        return "success-row";
+      }
+    },
   }
 };
 </script>
@@ -115,5 +123,12 @@ export default {
       width: 80px;
     }
   }
+}
+/deep/.el-table .warning-row {
+  background: oldlace;
+}
+
+/deep/.el-table .success-row {
+  background: #f0f9eb;
 }
 </style>

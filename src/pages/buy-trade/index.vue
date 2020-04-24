@@ -16,6 +16,7 @@
         style="width: 100%"
         :header-cell-style="thStyleFun"
         :cell-style="cellStyleFun"
+        :row-class-name="tableRowClassName"
       >
         <el-table-column prop="account" label="账号名" width="120"></el-table-column>
         <el-table-column prop="stock_code" label="股票代码" width="120"></el-table-column>
@@ -88,7 +89,7 @@
     </el-dialog>
     <!-- 一键托管弹框 -->
     <el-dialog title="一键托管" :visible.sync="dialogAllEntrust" width="25%" class="diaEntrust">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tabs v-model="activeName" @tab-click="handleClick" :stretch="true">
         <el-tab-pane label="数量" name="first">
           <el-form label-width="auto" :model="allNum">
             <el-form-item label="数量：">
@@ -98,7 +99,7 @@
         </el-tab-pane>
         <el-tab-pane label="金额" name="second">
           <el-form label-width="auto" :model="allMoney">
-            <el-form-item label="数量：">
+            <el-form-item label="金额:">
               <el-input v-model="allMoney.money"></el-input>
             </el-form-item>
           </el-form>
@@ -317,7 +318,15 @@ export default {
       } catch (error) {
         this.$message.error("操作失败");
       }
-    }
+    },
+    // 隔行变色
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 ==1) {
+        return "warning-row";
+      } else {
+        return "success-row";
+      }
+    },
   }
 };
 </script>
@@ -351,8 +360,19 @@ export default {
   }
 }
 .diaEntrust {
+  /deep/.el-tabs__active-bar {
+    height: 0;
+    width: 30px!important;
+  }
   .el-button--primary {
     width: 100%;
   }
+}
+/deep/.el-table .warning-row {
+  background: oldlace;
+}
+
+/deep/.el-table .success-row {
+  background: #f0f9eb;
 }
 </style>

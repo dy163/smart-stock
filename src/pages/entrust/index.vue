@@ -1,11 +1,16 @@
 <template>
-  <el-card class="entrust">
+  <div class="entrust">
     <el-card class="entrust-top">
-      <p>委托列表</p>
+      <div>
+        <p>委托列表</p>
+        <p>
+          <el-button type="primary" @click.native="handleRefresh">刷新</el-button>
+        </p>
+      </div>
     </el-card>
     <!-- 内容 -->
     <el-card>
-      <el-table :data="entrustList" style="width: 100%">
+      <el-table :data="entrustList" style="width: 100%" :row-class-name="tableRowClassName">
         <el-table-column prop="stock_code" label="股票代码"></el-table-column>
         <el-table-column prop="market" label="市场"></el-table-column>
         <el-table-column prop="price" label="价格"></el-table-column>
@@ -30,7 +35,7 @@
         ></el-pagination>
       </div>
     </el-card>
-  </el-card>
+  </div>
 </template>
 
 <script>
@@ -54,10 +59,20 @@ export default {
       };
     }
   },
-  created() {
+  mounted() {
+    // this.$nexTick(() => {
     this.handleEntrustList();
+    // })
   },
   methods: {
+    // 刷新
+    handleRefresh() {
+      this.handleEntrustList();
+      this.$message({
+        message: "恭喜你，这是一条成功消息",
+        type: "success"
+      });
+    },
     // 委托列表
     async handleEntrustList() {
       try {
@@ -68,7 +83,7 @@ export default {
         this.entrustList = res.data.result.list;
         this.totalCount = res.data.result.total;
       } catch (error) {
-        this.$message('获取失败')
+        this.$message("获取失败");
       }
     },
     // 分页
@@ -79,6 +94,14 @@ export default {
     handleCurrentChange(page) {
       this.pageNum = page;
       this.handleEntrustList();
+    },
+    // 隔行变色
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex % 2 == 1) {
+        return "warning-row";
+      } else {
+        return "success-row";
+      }
     }
   }
 };
@@ -87,17 +110,21 @@ export default {
 <style lang='less' scoped>
 .entrust-top {
   margin-bottom: 10px;
-  .entrust-header {
+  div {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: flex-end;
-    p {
-      margin-right: 15px;
-    }
   }
 }
 .screening-pagination {
   margin-top: 20px;
   text-align: center;
+}
+/deep/.el-table .warning-row {
+  background: oldlace;
+}
+
+/deep/.el-table .success-row {
+  background: #f0f9eb;
 }
 </style>

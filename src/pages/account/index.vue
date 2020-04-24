@@ -1,43 +1,34 @@
 <template>
   <div class="account">
     <!-- 有账号的展示 -->
-    <el-card>
-      <div class="account-card">
-        <div>
-          <el-button type="primary" @click="dialogAdd = true">新增</el-button>
-        </div>
-        <div>
-          <el-form ref="form" :model="formOptions" label-width="80px">
-            <el-form-item label="当前账号:">
-              <!-- <span class="account-card-span">{{ variAccount }}</span> -->
-              <el-select
-                v-model="formOptions.region"
-                placeholder="请选择"
-                @change="handleSelectGetList"
-              >
-                <el-option
-                  v-for="item in option"
-                  :key="item.id"
-                  :label="item.account"
-                  :value="item.id"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-form>
-        </div>
-      </div>
+    <el-card class="box-card-header">
+      <el-form ref="form1" :model="formOptions" label-width="80px">
+        <el-form-item label="当前账号:">
+          <el-select v-model="formOptions.region" placeholder="请选择" @change="handleSelectGetList">
+            <el-option v-for="item in option" :key="item.id" :label="item.account" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
     </el-card>
     <!-- 内容展示 -->
     <el-card class="box-card">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="account" label="账号"></el-table-column>
-        <el-table-column prop="create_time" label="创建时间"></el-table-column>
-        <el-table-column label="操作">
+        <el-table-column prop="total_asset" label="总资产"></el-table-column>
+        <el-table-column prop="buying_power" label="可用资产"></el-table-column>
+        <el-table-column prop="preferred_amount" label="可取资产"></el-table-column>
+        <el-table-column prop="security_asset" label="证券资产"></el-table-column>
+        <el-table-column prop="fund_buy_fee" label="买入费用"></el-table-column>
+        <el-table-column prop="fund_sell_fee" label="卖出费用"></el-table-column>
+        <el-table-column prop="withholding_amount" label="预扣资金"></el-table-column>
+        <el-table-column prop="orig_banlance" label="昨日余额"></el-table-column>
+        <el-table-column prop="banlance" label="当前余额"></el-table-column>
+        <el-table-column prop="deposit_withdraw" label="当天出入金"></el-table-column>
+        <!-- <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">修改</el-button>
             <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
     </el-card>
     <!-- 无账号的展示 -->
@@ -61,23 +52,6 @@
         </el-form-item>
         <el-form-item class="account-btn">
           <el-button type="primary" @click="handleAdd">确认添加</el-button>
-        </el-form-item>
-      </el-form>
-    </el-dialog>
-    <!-- 修改账号展示 -->
-    <el-dialog title="修改账号" :visible.sync="dialogAccount" width="25%" class="acconnt-show">
-      <el-form ref="form" :model="formEdit" label-width="auto">
-        <el-form-item label="账号">
-          <el-input v-model="formEdit.acconnt"></el-input>
-        </el-form-item>
-        <el-form-item label="密码">
-          <el-input v-model="formEdit.password" type="password"></el-input>
-        </el-form-item>
-        <el-form-item label="密钥">
-          <el-input v-model="formEdit.trade_key"></el-input>
-        </el-form-item>
-        <el-form-item class="account-btn">
-          <el-button type="primary" @click="handleEditDefine">确认修改</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -115,7 +89,8 @@ import {
   userDelete,
   userUpdate,
   userIsSelect,
-  userSelect
+  userSelect,
+  userAssetGetDetail
 } from "@/api/user";
 
 export default {
@@ -157,11 +132,24 @@ export default {
     };
   },
   created() {
-    this.handleStraining();
+    // this.handleStraining();
+    this.handleUserAssetGetDetail();
   },
   methods: {
+    // 账户资金详情
+    async handleUserAssetGetDetail() {
+      try {
+        const date = new FormData();
+        const res = await userAssetGetDetail(date);
+        this.tableData = res.data.result;
+        console.log(res.data.result)
+      } catch (error) {
+        
+      }
+    },
+    // 判断是否登录选择账号
     async handleStraining() {
-      // this.handleSelectGetList(this.valueAcconnt);
+      this.handleSelectGetList(this.valueAcconnt);
       try {
         const date = new FormData();
         const res = await userIsSelect(date);
@@ -214,60 +202,6 @@ export default {
           this.dialogTableVisible = true;
         });
     },
-    // 更新账号
-    handleEdit(index, row) {
-      this.editId = row.id;
-      this.formEdit.acconnt = row.account;
-      this.formEdit.trade_key = row.trade_key;
-      this.dialogAccount = true;
-    },
-    async handleEditDefine() {
-      try {
-        const date = new FormData();
-        date.append("id", this.editId);
-        date.append("account", this.formEdit.acconnt);
-        date.append("password", this.formEdit.password);
-        date.append("trade_key", this.formEdit.trade_key);
-        const res = await userUpdate(date);
-        if (res.data.status) {
-          this.$message({
-            message: "修改成功",
-            type: "success"
-          });
-          this.formEdit.acconnt = "";
-          this.formEdit.password = "";
-          this.formEdit.trade_key = "";
-          this.handllGetList();
-          this.dialogAccount = false;
-        } else {
-          this.$message.error("错了哦，删除失败");
-        }
-      } catch (error) {}
-    },
-    // 删除账号
-    handleDelete(index, row) {
-      this.$confirm("确认删除账号?", "删除提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(async () => {
-          const date = new FormData();
-          date.append("id", row.id);
-          await userDelete(date);
-          this.handleDialogAccount(); // 更新列表
-          this.$message({
-            type: "success",
-            message: "删除成功!"
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          });
-        });
-    },
     // 账号列表
     async handllGetList() {
       try {
@@ -307,7 +241,6 @@ export default {
       try {
         const res = await userGetList();
         this.option = res.data.result;
-        this.tableData = res.data.result;
       } catch (error) {
         this.$message.error("操作失败");
       }
@@ -349,18 +282,24 @@ export default {
 </script>
 
 <style lang='less' scoped>
-.account-card {
-  height: 80px;
-  line-height: 80px;
-  display: flex;
-  justify-content: space-between;
-  // .account-card-span {
-  //   display: inline-block;
-  //   width: 120px;
-  // }
-  .el-select {
-    // width: 120px;
-    margin-left: 15px;
+.account {
+  .box-card-header {
+    
+    /deep/.el-card__body {
+      height: 40px;
+      padding: 10px 20px;
+      position: relative;
+    }
+    .el-form {
+      position: absolute;
+      right: 0;
+      .el-form-item {
+        margin-bottom: 0;
+      }
+      .el-select {
+        width: 140px;
+      }
+    }
   }
 }
 .acconnt-show {
