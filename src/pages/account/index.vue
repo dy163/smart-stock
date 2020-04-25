@@ -23,12 +23,6 @@
         <el-table-column prop="orig_banlance" label="昨日余额"></el-table-column>
         <el-table-column prop="banlance" label="当前余额"></el-table-column>
         <el-table-column prop="deposit_withdraw" label="当天出入金"></el-table-column>
-        <!-- <el-table-column label="操作">
-          <template slot-scope="scope">
-            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">修改</el-button>
-            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-          </template>
-        </el-table-column> -->
       </el-table>
     </el-card>
     <!-- 无账号的展示 -->
@@ -86,8 +80,6 @@
 import {
   userGetList,
   userAdd,
-  userDelete,
-  userUpdate,
   userIsSelect,
   userSelect,
   userAssetGetDetail
@@ -132,8 +124,7 @@ export default {
     };
   },
   created() {
-    // this.handleStraining();
-    this.handleUserAssetGetDetail();
+    this.handleStraining();
   },
   methods: {
     // 账户资金详情
@@ -143,8 +134,7 @@ export default {
         const res = await userAssetGetDetail(date);
         this.tableData = res.data.result;
         console.log(res.data.result)
-      } catch (error) {
-        
+      } catch (error) {  
       }
     },
     // 判断是否登录选择账号
@@ -164,6 +154,15 @@ export default {
           type: "info",
           message: "取消选择账号"
         });
+      }
+    },
+    // 账号列表
+    async handllGetList() {
+      try {
+        const res = await userGetList();
+        this.accountData = res.data.result;
+      } catch (error) {
+        this.$message.error("操作失败");
       }
     },
     // 添加新账号
@@ -187,7 +186,6 @@ export default {
             this.form.acconnt = "";
             this.form.password = "";
             this.form.trade_key = "";
-            this.handllGetList();
           }
           if (res.data.result == 10003 || res.data.result == 10006) {
             this.$message.error("添加失败,请重新添加");
@@ -202,16 +200,7 @@ export default {
           this.dialogTableVisible = true;
         });
     },
-    // 账号列表
-    async handllGetList() {
-      try {
-        const res = await userGetList();
-        this.accountData = res.data.result;
-      } catch (error) {
-        this.$message.error("操作失败");
-      }
-    },
-    // 选择账号
+    // 选择账号(账号列表)
     async handleSelectGetList(q) {
       try {
         const date = new FormData();
@@ -236,15 +225,6 @@ export default {
       window.localStorage.setItem("val", val);
       this.valueAcconnt = window.localStorage.getItem("val");
     },
-    // 在次调用账号列表
-    async handleDialogAccount() {
-      try {
-        const res = await userGetList();
-        this.option = res.data.result;
-      } catch (error) {
-        this.$message.error("操作失败");
-      }
-    },
     // 确定单选框选择账户
     async handleSure() {
       try {
@@ -261,12 +241,22 @@ export default {
           this.dialogTableVisible = false;
           this.handleDialogAccount();
           this.handleSelectGetList(this.valueAcconnt);
+          this.handleUserAssetGetDetail();
           return this.$message({
             showClose: true,
             message: "已成功选择账号",
             type: "success"
           });
         }
+      } catch (error) {
+        this.$message.error("操作失败");
+      }
+    },
+    // 在次调用账号列表
+    async handleDialogAccount() {
+      try {
+        const res = await userGetList();
+        this.option = res.data.result;
       } catch (error) {
         this.$message.error("操作失败");
       }
