@@ -27,6 +27,7 @@ request.interceptors.response.use(function (response) {
   if(response.data.result == 10000) {
     removeUser()
     removeUserName()
+    window.localStorage.removeItem('val')
     window.location.reload()
     this.$router.push('/login')
   } else {

@@ -3,7 +3,7 @@
     <!-- 持仓头部 -->
     <el-card class="shares-top">
       <div>
-        <p>委托列表</p>
+        <p>持仓列表</p>
         <p>
           <el-button type="primary" @click.native="handleRefresh">刷新</el-button>
         </p>
