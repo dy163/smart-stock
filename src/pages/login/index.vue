@@ -1,6 +1,12 @@
 <template>
   <div class="login">
     <div class="login-content">
+      <div class="login-content-header">
+        <p>
+          <img src="@/assets/yidun.png" alt />
+        </p>
+        <p>智能股票系统</p>
+      </div>
       <el-form ref="form" :model="form" label-width="60px">
         <el-form-item label="账户:">
           <el-input v-model="form.account"></el-input>
@@ -88,12 +94,6 @@ export default {
       } catch (error) {
         this.$message.error("登录操作失败");
       }
-    },
-    keyLogin() {
-      if (event.keyCode == 13)
-        //回车键的键值为13
-        document.getElementById("aa").click(); //调用登录按钮的登录事件
-      console.log("123");
     }
   }
 };
@@ -114,6 +114,25 @@ export default {
   border-radius: 10px;
   padding: 30px 20px 30px 0;
   z-index: 9999;
+  .login-content-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    margin-bottom: 20px;
+    p:nth-child(1) {
+      background-color: #fff;
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      margin-right: 15px;
+      img {
+        width: 100%;
+        border-radius: 10px;
+      }
+    }
+  }
+
   .el-form-item {
     /deep/.el-form-item__label {
       color: #fff;
