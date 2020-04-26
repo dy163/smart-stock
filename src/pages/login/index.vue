@@ -9,7 +9,7 @@
           <el-input v-model="form.password" type="password"></el-input>
         </el-form-item>
         <el-form-item class="login-btn">
-          <el-button type="primary" @click="handleSubmit">登录</el-button>
+          <el-button type="primary" @click="handleSubmit" id="aa">登录</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -40,10 +40,18 @@ export default {
       }
     };
   },
-  created() {},
+  mounted() {
+    window.addEventListener("keydown", this.keyDown);
+  },
+  destroyed() {
+    window.removeEventListener("keydown", this.keyDown, false);
+  },
   methods: {
-    canplay() {
-      this.vedioCanPlay = true;
+    keyDown(e) {
+      //如果是回车则执行登录方法
+      if (e.keyCode == 13) {
+        this.handleSubmit();
+      }
     },
     async handleSubmit() {
       try {
@@ -80,6 +88,12 @@ export default {
       } catch (error) {
         this.$message.error("登录操作失败");
       }
+    },
+    keyLogin() {
+      if (event.keyCode == 13)
+        //回车键的键值为13
+        document.getElementById("aa").click(); //调用登录按钮的登录事件
+      console.log("123");
     }
   }
 };
@@ -113,7 +127,7 @@ export default {
   }
 }
 .video-container {
-  object-fit: cover;  // 视频占满全屏
+  object-fit: cover; // 视频占满全屏
   position: absolute;
 }
 </style>

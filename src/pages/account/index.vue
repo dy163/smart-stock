@@ -104,13 +104,14 @@ export default {
       },
       option: [],
       tableData: [],
-      valueAcconnt: window.localStorage.getItem('val')
+      valueAcconnt: ''
     };
   },
   mounted() {
     this.handleStraining();
     this.handllGetList();
-    this.formOptions.region = ''? '': this.valueAcconnt
+    this.formOptions.region = window.localStorage.getItem('val')
+    
   },
   methods: {
     // 账户资金详情
@@ -207,6 +208,7 @@ export default {
     // 选择账号
     handleCurrentChange(val) {
       window.localStorage.setItem("val", val);
+      this.valueAcconnt = window.localStorage.getItem('val')
     },
     // 确定单选框选择账户
     async handleSure() {
