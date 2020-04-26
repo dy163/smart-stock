@@ -83,10 +83,13 @@ export default {
 /deep/.el-menu-item {
   border-bottom: 0.5px solid #14151c;
 }
-.el-submenu.is-active .el-submenu__title {
-  border-bottom: 0.5px solid #14151c;
+/deep/.el-submenu__title {
+ border-bottom: 0.5px solid #14151c;
 }
-.aside-buy {
-  border-top: 0.5px solid #14151c;
-}
+// .el-submenu.is-active .el-submenu__title {
+//   border-bottom: 0.5px solid #14151c;
+// }
+// .aside-buy {
+//   border-top: 0.5px solid #14151c;
+// }
 </style>

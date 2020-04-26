@@ -50,6 +50,7 @@ export default {
             removeUser();
             removeUserName();
             removeBuyEntrust();
+            window.localStorage.removeItem('val')
             // removeUserName()
             // 跳转到登录页
             this.$router.push({ name: "login" });

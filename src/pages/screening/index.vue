@@ -160,7 +160,6 @@ export default {
         } else {
           this.filtrateList = res.data.result.list;
           this.totalCount = res.data.result.total;
-          this.$store.commit("handleFiltrateAddOne", this.filtrateList);
         }
       } catch (error) {
         this.$message.error("列表操作获取失败");
@@ -227,7 +226,7 @@ export default {
           }
         }
       } catch (error) {
-        // console.log(error, "操作失败");
+        this.$message.error("操作失败");
       }
     },
     // 删除单条股票

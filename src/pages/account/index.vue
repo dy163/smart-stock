@@ -94,37 +94,23 @@ export default {
       dialogTableVisible: false,
       accountData: [],
       radio: "",
-      valueAcconnt: "",
       form: {
         acconnt: "",
         password: "",
         trade_key: ""
       },
-      formEdit: {
-        acconnt: "",
-        password: "",
-        trade_key: ""
-      },
-      editId: "",
       formOptions: {
         region: ""
       },
       option: [],
       tableData: [],
-      verifType: [
-        {
-          type: "info",
-          label: "修改"
-        },
-        {
-          type: "danger",
-          label: "删除"
-        }
-      ]
+      valueAcconnt: window.localStorage.getItem('val')
     };
   },
-  created() {
+  mounted() {
     this.handleStraining();
+    this.handllGetList();
+    this.formOptions.region = ''? '': this.valueAcconnt
   },
   methods: {
     // 账户资金详情
@@ -132,28 +118,23 @@ export default {
       try {
         const date = new FormData();
         const res = await userAssetGetDetail(date);
-        this.tableData = res.data.result;
-        console.log(res.data.result)
-      } catch (error) {  
+        this.tableData.push(res.data.result);
+      } catch (error) {
+        this.$message.error("错了哦，操作失败");
       }
     },
     // 判断是否登录选择账号
     async handleStraining() {
-      this.handleSelectGetList(this.valueAcconnt);
       try {
         const date = new FormData();
         const res = await userIsSelect(date);
         if (res.data.result === 10009) {
           this.dialogTableVisible = true;
-          this.handllGetList();
         } else if (res.data.result == null) {
-          this.handleDialogAccount();
+          this.handleUserAssetGetDetail();
         }
       } catch (error) {
-        this.$message({
-          type: "info",
-          message: "取消选择账号"
-        });
+        this.$message.error("选择账号操作失败");
       }
     },
     // 账号列表
@@ -161,6 +142,7 @@ export default {
       try {
         const res = await userGetList();
         this.accountData = res.data.result;
+        this.option = res.data.result;
       } catch (error) {
         this.$message.error("操作失败");
       }
@@ -179,6 +161,8 @@ export default {
           date.append("trade_key", this.form.trade_key);
           const res = await userAdd(date);
           if (res.data.status) {
+            this.dialogAdd = false;
+            this.dialogTableVisible = true;
             this.$message({
               message: "添加成功",
               type: "success"
@@ -223,7 +207,6 @@ export default {
     // 选择账号
     handleCurrentChange(val) {
       window.localStorage.setItem("val", val);
-      this.valueAcconnt = window.localStorage.getItem("val");
     },
     // 确定单选框选择账户
     async handleSure() {
@@ -239,7 +222,6 @@ export default {
           });
         } else if (res.data.status) {
           this.dialogTableVisible = false;
-          this.handleDialogAccount();
           this.handleSelectGetList(this.valueAcconnt);
           this.handleUserAssetGetDetail();
           return this.$message({
@@ -247,25 +229,12 @@ export default {
             message: "已成功选择账号",
             type: "success"
           });
+        } else if(res.data.result == 10004) {
+          this.$message.error("账号不存在");
         }
       } catch (error) {
         this.$message.error("操作失败");
       }
-    },
-    // 在次调用账号列表
-    async handleDialogAccount() {
-      try {
-        const res = await userGetList();
-        this.option = res.data.result;
-      } catch (error) {
-        this.$message.error("操作失败");
-      }
-    },
-    thStyleFun() {
-      return "text-align:center";
-    },
-    cellStyleFun() {
-      return "text-align:center";
     }
   }
 };
@@ -274,7 +243,6 @@ export default {
 <style lang='less' scoped>
 .account {
   .box-card-header {
-    
     /deep/.el-card__body {
       height: 40px;
       padding: 10px 20px;
