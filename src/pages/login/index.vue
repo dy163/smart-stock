@@ -1,5 +1,4 @@
 <template>
-  <!-- <div class="login" :style="back"> -->
   <div class="login">
     <div class="login-content">
       <el-form ref="form" :model="form" label-width="60px">
@@ -38,11 +37,6 @@ export default {
       form: {
         account: "",
         password: ""
-      },
-      back: {
-        backgroundImage: "url(" + require("@/assets/back-img/bj.gif") + ")",
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "100% 100%"
       }
     };
   },
@@ -119,7 +113,7 @@ export default {
   }
 }
 .video-container {
-  object-fit: cover;
+  object-fit: cover;  // 视频占满全屏
   position: absolute;
 }
 </style>
