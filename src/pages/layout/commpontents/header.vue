@@ -2,7 +2,7 @@
   <div class="stock-header">
     <div>
       <p>
-        <img src="@/assets/yidun.png" alt />
+        <img src="@/assets/logo.png" alt />
       </p>
       <p>智能股票系统</p>
     </div>
@@ -98,13 +98,13 @@ export default {
     color: #fff;
     p:nth-child(1) {
       height: 32px;
+      line-height: 32px;
       width: 35px;
-      background-color: #fff;
       margin-right: 8px;
       border-radius: 10px;
       img {
         width: 100%;
-        border-radius: 10px;
+        vertical-align: middle;
       }
     }
   }

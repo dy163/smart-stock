@@ -3,7 +3,7 @@
     <div class="login-content">
       <div class="login-content-header">
         <p>
-          <img src="@/assets/yidun.png" alt />
+          <img src="@/assets/logo.png" alt />
         </p>
         <p>智能股票系统</p>
       </div>
@@ -114,22 +114,27 @@ export default {
   border-radius: 10px;
   padding: 30px 20px 30px 0;
   z-index: 9999;
-  .login-content-header {
+  .login-content-header { 
     display: flex;
     justify-content: center;
     align-items: center;
     color: #fff;
     margin-bottom: 20px;
     p:nth-child(1) {
-      background-color: #fff;
+      // background-color: #fff;
       width: 30px;
       height: 30px;
+      line-height: 30px;
       border-radius: 10px;
       margin-right: 15px;
       img {
         width: 100%;
-        border-radius: 10px;
+        vertical-align: middle;
       }
+    }
+    p:nth-child(2) {
+      letter-spacing:10px;
+      font-size: 18px;
     }
   }
 
