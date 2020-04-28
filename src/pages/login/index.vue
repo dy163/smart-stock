@@ -110,7 +110,7 @@ export default {
 }
 .login-content {
   width: 500px;
-  // border: 1px solid #000;
+  border: 0.5px solid #ffffff;
   border-radius: 10px;
   padding: 30px 20px 30px 0;
   z-index: 9999;
