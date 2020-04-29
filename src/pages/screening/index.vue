@@ -27,7 +27,17 @@
           <el-button type="primary" @click.native="handleFiltrateAddOne">手动添加</el-button>
         </div>
         <div>
-          <el-button type="primary" @click.native="handleChoice">智能筛选</el-button>
+          <!-- <el-button type="primary" @click.native="handleChoice">智能筛选</el-button> -->
+          <el-form ref="form" :model="choice" label-width="80px">
+            <el-form-item label="智能筛选:">
+              <el-select v-model="choice.region" placeholder="请选择合适区间">
+                <el-option label="3%" value="sh"></el-option>
+                <el-option label="5%" value="bj"></el-option>
+                <el-option label="8%" value="hz"></el-option>
+                <el-option label="100%" value="xm"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
         </div>
       </div>
     </el-card>
@@ -125,6 +135,9 @@ export default {
       ],
       stockAccount: "", // 手动筛选
       filtrateList: [],
+      choice: {
+        region: "5%"
+      },
       pageNum: 1,
       pageSize: [10, 15, 20, 25, 30],
       totalCount: 0
@@ -141,8 +154,12 @@ export default {
     this.handleFiltrateGetList();
   },
   methods: {
+    handleCommand(command) {
+      console.log(command);
+    },
+    // 隔行变色
     tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 ==1) {
+      if (rowIndex % 2 == 1) {
         return "warning-row";
       } else {
         return "success-row";
@@ -286,6 +303,15 @@ export default {
         margin-left: 10px;
         height: 41px;
       }
+    }
+  }
+  .el-form {
+    .el-form-item {
+      background-color: #409eff;
+      color: #fff;
+    }
+    .el-select {
+      width: 85px;
     }
   }
 }

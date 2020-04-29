@@ -76,3 +76,14 @@ export const filtratebuyAllEntrust = query => {
     data: query
   })
 }
+
+/**
+ * 22.手动单条卖出
+ */
+export const sellEntrust = query => {
+  return request({
+    method: 'POST',
+    url: '/myBuyStock/sellEntrust',
+    data: query
+  })
+}

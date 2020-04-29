@@ -14,6 +14,11 @@
         <el-table-column prop="sellableQty" label="可卖数量"></el-table-column>
         <el-table-column prop="avgPrice" label="成本价"></el-table-column>
         <el-table-column prop="unrealizedPnl" label="浮动盈亏"></el-table-column>
+        <el-table-column prop label="操作">
+          <template slot-scope="scope">
+            <el-button size="mini" type="danger" @click="handleSell(scope.$index, scope.row)">卖出</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <div class="screening-pagination">
         <el-pagination
@@ -32,7 +37,11 @@
 </template>
 
 <script>
-import { myBuyStockGetList, filtrateSellSubscribe } from "@/api/trade";
+import {
+  myBuyStockGetList,
+  filtrateSellSubscribe,
+  sellEntrust
+} from "@/api/trade";
 
 export default {
   name: "SellTradeIndex",
@@ -55,6 +64,10 @@ export default {
     this.handleStockList();
   },
   methods: {
+    // 单条卖出
+    handleSell(index, row) {
+      console.log(row)
+    },
     async handleStockList() {
       try {
         const date = new FormData();
@@ -99,12 +112,12 @@ export default {
     },
     // 隔行变色
     tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 ==1) {
+      if (rowIndex % 2 == 1) {
         return "warning-row";
       } else {
         return "success-row";
       }
-    },
+    }
   }
 };
 </script>
