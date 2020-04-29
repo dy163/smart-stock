@@ -20,7 +20,7 @@
         <el-table-column prop="insert_time" label="委托时间"></el-table-column>
         <el-table-column prop="trade_amount" label="成交金额"></el-table-column>
         <el-table-column prop="order_status" label="状态"></el-table-column>
-        <el-table-column prop="buy_or_sell" label="方向">
+        <el-table-column label="方向">
           <template slot-scope="scope">
             <P :style="{ color: scope.row.buy_or_sell == '卖出'?  'blue' : 'red'}"> {{ scope.row.buy_or_sell }}</P>
           </template>

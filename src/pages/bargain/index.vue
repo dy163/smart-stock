@@ -19,6 +19,11 @@
         <el-table-column prop="trade_amount" label="成交金额"></el-table-column>
         <el-table-column prop="trade_time" label="成交时间"></el-table-column>
         <el-table-column prop="trade_type" label="成交类型"></el-table-column>
+        <el-table-column label="方向">
+          <template slot-scope="scope">
+            <P :style="{ color: scope.row.buy_or_sell == '卖出'?  'blue' : 'red'}"> {{ scope.row.buy_or_sell }}</P>
+          </template>
+        </el-table-column>
       </el-table>
       <!-- 分页 -->
       <div class="screening-pagination">
