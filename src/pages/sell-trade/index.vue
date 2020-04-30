@@ -35,7 +35,6 @@
       <!-- 单独卖出展示 -->
       <el-dialog
         title="卖出"
-        :show-close="false"
         :visible.sync="dialogSell"
         width="20%"
         class="sell-show"
@@ -49,8 +48,7 @@
             <p>{{ formSell.market }}</p>
           </el-form-item>
           <el-form-item label="价格:">
-            <!-- <el-input v-model="formSell.price"></el-input> -->
-            <el-input-number v-model="formSell.price" :min="0"></el-input-number>
+            <el-input-number v-model="formSell.price" :min="0" :precision="2" :step="0.01"></el-input-number>
           </el-form-item>
           <el-form-item label="数量:">
             <el-input-number v-model="formSell.num" :min="100" :step="100" step-strictly></el-input-number>
@@ -207,13 +205,11 @@ export default {
   background: #f0f9eb;
 }
 .sell-show {
-  /deep/.el-dialog__body {
-    padding: 0;
-  }
   .el-input-number {
     width: 100%;
   }
   .sell-btn {
+    margin-bottom: 0;
     width: 100%;
     /deep/.el-form-item__content {
       margin: 0 !important;
