@@ -26,18 +26,23 @@
           </el-input>
           <el-button type="primary" @click.native="handleFiltrateAddOne">手动添加</el-button>
         </div>
+        <!-- <a href="http://smart.yidonghuayuan.com/static/excel" download>下载</a> -->
         <div>
-          <el-button type="primary" @click.native="handleBrainPower">智能筛选</el-button>
-          <!-- <el-form ref="form" :model="choice" label-width="80px">
+          <!-- <el-button type="primary" @click.native="handleBrainPower">智能筛选</el-button> -->
+          <el-form ref="form" :model="choice" label-width="80px">
             <el-form-item label="智能筛选:">
-              <el-select v-model="choice.region" placeholder="请选择合适区间">
-                <el-option label="3%" value="sh"></el-option>
-                <el-option label="5%" value="bj"></el-option>
-                <el-option label="8%" value="hz"></el-option>
-                <el-option label="100%" value="xm"></el-option>
+              <el-select
+                v-model="choice.region"
+                placeholder="请选择合适区间"
+                @change="handleSelectGetList"
+              >
+                <el-option label="3%" value="0"></el-option>
+                <el-option label="5%" value="1"></el-option>
+                <el-option label="8%" value="2"></el-option>
+                <el-option label="10%" value="3"></el-option>
               </el-select>
             </el-form-item>
-          </el-form> -->
+          </el-form>
         </div>
       </div>
     </el-card>
@@ -138,6 +143,7 @@ export default {
       choice: {
         region: "5%"
       },
+      range: 1.05,
       pageNum: 1,
       pageSize: [10, 15, 20, 25, 30],
       totalCount: 0
@@ -154,9 +160,21 @@ export default {
     this.handleFiltrateGetList();
   },
   methods: {
-    // handleCommand(command) {
-    //   console.log(command);
-    // },
+    handleSelectGetList(q) {
+      if (q == 0) {
+        this.range = 1.03;
+        this.handleBrainPower();
+      } else if (q == 1) {
+        this.range = 1.05;
+        this.handleBrainPower();
+      } else if (q == 2) {
+        this.range = 1.08;
+        this.handleBrainPower();
+      } else if (q == 3) {
+        this.range = 1.1;
+        this.handleBrainPower();
+      }
+    },
     // 隔行变色
     tableRowClassName({ row, rowIndex }) {
       if (rowIndex % 2 == 1) {
@@ -192,13 +210,11 @@ export default {
       this.handleFiltrateGetList();
     },
     // 智能选股
-    // handleChoice() {
-    //   this.handleFiltrateClear();
-    //   this.handleBrainPower();
-    // },
     async handleBrainPower() {
       try {
-        const res = await filtrateAddList();
+        const date = new FormData();
+        date.append("up_range", this.range);
+        const res = await filtrateAddList(date);
         if (res.data.result == 10017) {
           return;
         } else if (res.data.status) {
@@ -306,7 +322,7 @@ export default {
     }
   }
   .el-form {
-    .el-form-item {
+    /deep/.el-form-item__label {
       background-color: #409eff;
       color: #fff;
     }

@@ -2,7 +2,10 @@
   <div class="shares">
     <!-- 持仓头部 -->
     <el-card class="shares-top">
-      <el-button type="primary" @click.native="handleFiltrateSellSubscribe">一键托管</el-button>
+      <div>
+        <el-button type="primary" @click.native="handleFiltrateSellSubscribe">一键托管</el-button>
+        <el-button type="primary" @click.native="handleFiltrateSellRenovate">刷新</el-button>
+      </div>
     </el-card>
     <!-- 持仓内容 -->
     <el-card class="shares-content">
@@ -97,6 +100,10 @@ export default {
     this.handleStockList();
   },
   methods: {
+    // 刷新
+    handleFiltrateSellRenovate() {
+      this.handleStockList()
+    },
     // 单条卖出
     handleSell(index, row) {
       this.formSell.code = row.stock_code;
@@ -124,10 +131,7 @@ export default {
         this.$message("卖出失败");
       }
     },
-    // handleChange(value) {
-    //   console.log(value);
-    // },
-    //////////////
+    // 卖出列表数据
     async handleStockList() {
       try {
         const date = new FormData();
@@ -185,6 +189,13 @@ export default {
 <style lang='less' scoped>
 .shares-top {
   margin-bottom: 10px;
+  .el-button--primary {
+    display: block;
+  }
+  div {
+    display: flex;
+    justify-content: space-between;
+  }
 }
 .screening-pagination {
   margin-top: 20px;
