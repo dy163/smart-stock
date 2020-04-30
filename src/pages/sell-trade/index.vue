@@ -32,6 +32,34 @@
           :total="totalCount"
         ></el-pagination>
       </div>
+      <!-- 单独卖出展示 -->
+      <el-dialog
+        title="卖出"
+        :show-close="false"
+        :visible.sync="dialogSell"
+        width="20%"
+        class="sell-show"
+        :close-on-click-modal="false"
+      >
+        <el-form ref="form" :model="formSell" label-width="auto">
+          <el-form-item label="代码:">
+            <p>{{ formSell.code }}</p>
+          </el-form-item>
+          <el-form-item label="市场:">
+            <p>{{ formSell.market }}</p>
+          </el-form-item>
+          <el-form-item label="价格:">
+            <!-- <el-input v-model="formSell.price"></el-input> -->
+            <el-input-number v-model="formSell.price" :min="0"></el-input-number>
+          </el-form-item>
+          <el-form-item label="数量:">
+            <el-input-number v-model="formSell.num" :min="100" :step="100" step-strictly></el-input-number>
+          </el-form-item>
+          <el-form-item class="sell-btn">
+            <el-button type="primary" @click="handleSubmitSell">确认添加</el-button>
+          </el-form-item>
+        </el-form>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -47,10 +75,17 @@ export default {
   name: "SellTradeIndex",
   data() {
     return {
+      dialogSell: false,
       pageNum: 1,
       pageSize: [10, 15, 20, 25, 30],
       totalCount: 0,
-      stockList: []
+      stockList: [],
+      formSell: {
+        code: "",
+        market: "",
+        price: "",
+        num: ""
+      }
     };
   },
   computed: {
@@ -66,8 +101,35 @@ export default {
   methods: {
     // 单条卖出
     handleSell(index, row) {
-      console.log(row)
+      this.formSell.code = row.stock_code;
+      this.formSell.market = row.market;
+      this.dialogSell = true;
     },
+    async handleSubmitSell() {
+      try {
+        const date = new FormData();
+        date.append("stock_code", this.formSell.code);
+        date.append("market", this.formSell.market);
+        date.append("price", this.formSell.price);
+        date.append("quantity", this.formSell.num);
+        const res = await sellEntrust(date);
+        if (res.data.status) {
+          this.dialogSell = false;
+          this.formSell.price = "";
+          this.formSell.num = "";
+          this.$message({
+            message: "单条卖出成功",
+            type: "success"
+          });
+        }
+      } catch (error) {
+        this.$message("卖出失败");
+      }
+    },
+    // handleChange(value) {
+    //   console.log(value);
+    // },
+    //////////////
     async handleStockList() {
       try {
         const date = new FormData();
@@ -143,5 +205,22 @@ export default {
 
 /deep/.el-table .success-row {
   background: #f0f9eb;
+}
+.sell-show {
+  /deep/.el-dialog__body {
+    padding: 0;
+  }
+  .el-input-number {
+    width: 100%;
+  }
+  .sell-btn {
+    width: 100%;
+    /deep/.el-form-item__content {
+      margin: 0 !important;
+      .el-button--primary {
+        width: 100%;
+      }
+    }
+  }
 }
 </style>

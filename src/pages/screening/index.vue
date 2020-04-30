@@ -27,8 +27,8 @@
           <el-button type="primary" @click.native="handleFiltrateAddOne">手动添加</el-button>
         </div>
         <div>
-          <!-- <el-button type="primary" @click.native="handleChoice">智能筛选</el-button> -->
-          <el-form ref="form" :model="choice" label-width="80px">
+          <el-button type="primary" @click.native="handleBrainPower">智能筛选</el-button>
+          <!-- <el-form ref="form" :model="choice" label-width="80px">
             <el-form-item label="智能筛选:">
               <el-select v-model="choice.region" placeholder="请选择合适区间">
                 <el-option label="3%" value="sh"></el-option>
@@ -37,7 +37,7 @@
                 <el-option label="100%" value="xm"></el-option>
               </el-select>
             </el-form-item>
-          </el-form>
+          </el-form> -->
         </div>
       </div>
     </el-card>
@@ -154,9 +154,9 @@ export default {
     this.handleFiltrateGetList();
   },
   methods: {
-    handleCommand(command) {
-      console.log(command);
-    },
+    // handleCommand(command) {
+    //   console.log(command);
+    // },
     // 隔行变色
     tableRowClassName({ row, rowIndex }) {
       if (rowIndex % 2 == 1) {
@@ -192,10 +192,10 @@ export default {
       this.handleFiltrateGetList();
     },
     // 智能选股
-    handleChoice() {
-      this.handleFiltrateClear();
-      this.handleBrainPower();
-    },
+    // handleChoice() {
+    //   this.handleFiltrateClear();
+    //   this.handleBrainPower();
+    // },
     async handleBrainPower() {
       try {
         const res = await filtrateAddList();

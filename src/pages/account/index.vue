@@ -111,7 +111,6 @@ export default {
     this.handleStraining();
     this.handllGetList();
     this.formOptions.region = window.localStorage.getItem('val')
-    
   },
   methods: {
     // 账户资金详情
