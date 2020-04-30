@@ -87,3 +87,14 @@ export const sellEntrust = query => {
     data: query
   })
 }
+
+/**
+ * 22.手动单条卖出
+ */
+export const excelDownload = query => {
+  return request({
+    method: 'POST',
+    url: '/excel/download',
+    data: query
+  })
+}

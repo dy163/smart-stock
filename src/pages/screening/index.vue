@@ -3,7 +3,7 @@
     <!-- 筛选头部 -->
     <el-card class="box-card">
       <div class="box-card-header">
-        <div>
+        <div class="download">
           <el-upload
             class="upload-demo"
             action="http://47.92.85.1:8089/excel/upload"
@@ -19,6 +19,9 @@
           >
             <el-button size="small" type="primary">点击上传excel</el-button>
           </el-upload>
+          <p>
+            <a href="http://smartstock.yidonghuayuan.com/excel/download" download>导出excel</a>
+          </p>
         </div>
         <div>
           <el-input placeholder="请输入股票代码" v-model="stockAccount">
@@ -26,25 +29,32 @@
           </el-input>
           <el-button type="primary" @click.native="handleFiltrateAddOne">手动添加</el-button>
         </div>
-        <!-- <a href="http://smart.yidonghuayuan.com/static/excel" download>下载</a> -->
         <div>
-          <!-- <el-button type="primary" @click.native="handleBrainPower">智能筛选</el-button> -->
-          <el-form ref="form" :model="choice" label-width="80px">
-            <el-form-item label="智能筛选:">
-              <el-select
-                v-model="choice.region"
-                placeholder="请选择合适区间"
-                @change="handleSelectGetList"
-              >
-                <el-option label="3%" value="0"></el-option>
-                <el-option label="5%" value="1"></el-option>
-                <el-option label="8%" value="2"></el-option>
-                <el-option label="10%" value="3"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-form>
+          <el-button type="primary" @click.native="handleFiltrateIntellect">智能筛选</el-button>
         </div>
       </div>
+      <el-dialog
+        title="智能选股"
+        :visible.sync="dialogIntellect"
+        width="25%"
+        class="screening-show"
+        :close-on-click-modal="false"
+      >
+        <el-form ref="form" :model="choice" label-width="80px" :inline="true">
+          <!-- <el-form ref="form" :model="choice" label-width="80px"> -->
+          <el-form-item label="上调区间:">
+            <el-select v-model="choice.region" placeholder="请选择合适区间" @change="handleSelectGetList">
+              <el-option label="3%" value="0"></el-option>
+              <el-option label="5%" value="1"></el-option>
+              <el-option label="8%" value="2"></el-option>
+              <el-option label="10%" value="3"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item class="account-btn">
+            <el-button type="primary" @click.native="handleSubmit">确认</el-button>
+          </el-form-item>
+        </el-form>
+      </el-dialog>
     </el-card>
     <!-- 筛选内容 -->
     <el-card>
@@ -100,7 +110,7 @@ import {
   filtrateDelete,
   filtrateAddOne
 } from "@/api/record";
-import { excelUpload } from "@/api/trade";
+import { excelUpload, excelDownload } from "@/api/trade";
 import { getUser } from "@/untils/auth";
 import { mapState } from "vuex";
 
@@ -108,6 +118,7 @@ export default {
   name: "ScreeningIndex",
   data() {
     return {
+      dialogIntellect: false,
       token: {
         token: getUser()
       },
@@ -146,7 +157,8 @@ export default {
       range: 1.05,
       pageNum: 1,
       pageSize: [10, 15, 20, 25, 30],
-      totalCount: 0
+      totalCount: 0,
+      id: ""
     };
   },
   computed: {
@@ -160,20 +172,37 @@ export default {
     this.handleFiltrateGetList();
   },
   methods: {
-    handleSelectGetList(q) {
-      if (q == 0) {
-        this.range = 1.03;
-        this.handleBrainPower();
-      } else if (q == 1) {
+    // handleSubmit
+    handleSubmit() {
+      if (this.id === "") {
         this.range = 1.05;
         this.handleBrainPower();
-      } else if (q == 2) {
+        this.dialogIntellect = false;
+      } else if (this.id == 0) {
+        this.range = 1.03;
+        this.handleBrainPower();
+        this.dialogIntellect = false;
+      } else if (this.id == 1) {
+        this.range = 1.05;
+        this.handleBrainPower();
+        this.dialogIntellect = false;
+      } else if (this.id == 2) {
         this.range = 1.08;
         this.handleBrainPower();
-      } else if (q == 3) {
+        this.dialogIntellect = false;
+      } else if (this.id == 3) {
         this.range = 1.1;
         this.handleBrainPower();
+        this.dialogIntellect = false;
       }
+    },
+    //
+    handleFiltrateIntellect() {
+      this.dialogIntellect = true;
+    },
+    //
+    handleSelectGetList(q) {
+      this.id = q;
     },
     // 隔行变色
     tableRowClassName({ row, rowIndex }) {
@@ -313,6 +342,20 @@ export default {
   .box-card-header {
     display: flex;
     justify-content: space-between;
+    .download {
+      display: flex;
+      p {
+        margin-left: 30px;
+        background-color: #409eff;
+        height: 32px;
+        line-height: 32px;
+        border-radius: 5px;
+        padding: 0 5px;
+        a {
+          color: #000;
+        }
+      }
+    }
     div:nth-child(2) {
       display: flex;
       .el-button {
@@ -322,12 +365,8 @@ export default {
     }
   }
   .el-form {
-    /deep/.el-form-item__label {
-      background-color: #409eff;
-      color: #fff;
-    }
     .el-select {
-      width: 85px;
+      width: 150px;
     }
   }
 }
@@ -341,5 +380,13 @@ export default {
 
 /deep/.el-table .success-row {
   background: #f0f9eb;
+}
+.screening-show {
+  text-align: center;
+  /deep/.el-dialog__body {
+    padding: 0;
+    height: 220px;
+    margin: 0;
+  }
 }
 </style>
