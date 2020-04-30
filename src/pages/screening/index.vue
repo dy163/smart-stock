@@ -352,7 +352,7 @@ export default {
         border-radius: 5px;
         padding: 0 5px;
         a {
-          color: #000;
+          color: #fff;
         }
       }
     }
