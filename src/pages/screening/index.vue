@@ -17,10 +17,11 @@
             :headers="token"
             accept=".xlsx"
           >
-            <el-button size="small" type="primary">点击上传excel</el-button>
+            <el-button size="small" type="primary">上传excel</el-button>
           </el-upload>
           <p>
-            <a href="http://smartstock.yidonghuayuan.com/excel/download" download>导出excel</a>
+            <span @click="handleDever">导出excel</span>
+            <!-- <a href="http://smartstock.yidonghuayuan.com/excel/download?up_range=1.03">导出excel</a> -->
           </p>
         </div>
         <div>
@@ -34,13 +35,13 @@
         </div>
       </div>
       <el-dialog
-        title="智能选股"
+        title="智能选择"
         :visible.sync="dialogIntellect"
         width="25%"
         class="screening-show"
         :close-on-click-modal="false"
       >
-        <el-form ref="form" :model="choice" label-width="80px" :inline="true">
+        <el-form ref="form" :model="choice" label-width="80px" :inline="true" v-show="showBargin">
           <!-- <el-form ref="form" :model="choice" label-width="80px"> -->
           <el-form-item label="上调区间:">
             <el-select v-model="choice.region" placeholder="请选择合适区间" @change="handleSelectGetList">
@@ -53,6 +54,38 @@
           <el-form-item class="account-btn">
             <el-button type="primary" @click.native="handleSubmit">确认</el-button>
           </el-form-item>
+        </el-form>
+        <!-- 导出 -->
+        <el-form ref="form" :model="choice" label-width="80px" :inline="true" v-show="showDever">
+          <el-form-item label="选择区间:">
+            <el-select
+              v-model="choice.region"
+              placeholder="请选择合适区间"
+              @change="handleSelectGetListDever"
+            >
+              <el-option label="3%" value="0">
+                <a
+                  href="http://smartstock.yidonghuayuan.com/excel/download?up_range=1.03"
+                >导出3%excel</a>
+              </el-option>
+              <el-option label="5%" value="1">
+                <a
+                  href="http://smartstock.yidonghuayuan.com/excel/download?up_range=1.05"
+                >导出5%excel</a>
+              </el-option>
+              <el-option label="8%" value="2">
+                <a
+                  href="http://smartstock.yidonghuayuan.com/excel/download?up_range=1.08"
+                >导出8%excel</a>
+              </el-option>
+              <el-option label="10%" value="3">
+                <a href="http://smartstock.yidonghuayuan.com/excel/download?up_range=1.1">导出10%excel</a>
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <!-- <el-form-item class="account-btn">
+            <el-button type="primary" @click.native="handleSubmit">确认</el-button>
+          </el-form-item>-->
         </el-form>
       </el-dialog>
     </el-card>
@@ -118,6 +151,8 @@ export default {
   name: "ScreeningIndex",
   data() {
     return {
+      showBargin: false,
+      showDever: false,
       dialogIntellect: false,
       token: {
         token: getUser()
@@ -199,6 +234,8 @@ export default {
     //
     handleFiltrateIntellect() {
       this.dialogIntellect = true;
+      this.showBargin = true;
+      this.showDever = false;
     },
     //
     handleSelectGetList(q) {
@@ -330,12 +367,26 @@ export default {
     },
     beforeRemove(file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`);
+    },
+    // 导出
+    handleDever() {
+      this.dialogIntellect = true;
+      this.showBargin = false;
+      this.showDever = true;
+    },
+    handleSelectGetListDever(q) {
+      if (q == 0 || q == 1 || q == 2 || q == 3) {
+        this.dialogIntellect = false;
+      }
     }
   }
 };
 </script>
 
 <style lang='less' scoped>
+a {
+  color: #000;
+}
 .box-card {
   margin-bottom: 10px;
   height: 110px;
@@ -351,8 +402,11 @@ export default {
         line-height: 32px;
         border-radius: 5px;
         padding: 0 5px;
-        a {
-          color: #fff;
+        font-size: 12px;
+        color: #fff;
+        span {
+          display: inline-block;
+          padding: 0 15px;
         }
       }
     }
@@ -362,11 +416,6 @@ export default {
         margin-left: 10px;
         height: 41px;
       }
-    }
-  }
-  .el-form {
-    .el-select {
-      width: 150px;
     }
   }
 }
